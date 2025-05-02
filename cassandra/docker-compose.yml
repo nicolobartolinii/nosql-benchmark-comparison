@@ -1,0 +1,23 @@
+services:
+  cassandra-1:
+    image: bitnami/cassandra:4.1
+    environment:
+      - CASSANDRA_CLUSTER_NAME=nosql-cluster
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
+    networks: [cass-net]
+  cassandra-2:
+    image: bitnami/cassandra:4.1
+    environment:
+      - CASSANDRA_CLUSTER_NAME=nosql-cluster
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
+    networks: [cass-net]
+  cassandra-3:
+    image: bitnami/cassandra:4.1
+    environment:
+      - CASSANDRA_CLUSTER_NAME=nosql-cluster
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
+    networks: [cass-net]
+
+networks:
+  cass-net:
+    driver: bridge

@@ -1,0 +1,97 @@
+version: "3.8"
+
+services:
+  redis-node1:
+    image: redis:latest
+    command:
+      - redis-server
+      - "--port"
+      - "6379"
+      - "--cluster-enabled"
+      - "yes"
+      - "--cluster-config-file"
+      - "nodes.conf"
+      - "--cluster-node-timeout"
+      - "5000"
+      - "--appendonly"
+      - "yes"
+      - "--cluster-announce-ip"
+      - "redis-node1"
+      - "--cluster-announce-port"
+      - "6379"
+      - "--cluster-announce-bus-port"
+      - "16379"
+    networks:
+      - redis-net
+
+  redis-node2:
+    image: redis:latest
+    command:
+      - redis-server
+      - "--port"
+      - "6379"
+      - "--cluster-enabled"
+      - "yes"
+      - "--cluster-config-file"
+      - "nodes.conf"
+      - "--cluster-node-timeout"
+      - "5000"
+      - "--appendonly"
+      - "yes"
+      - "--cluster-announce-ip"
+      - "redis-node2"
+      - "--cluster-announce-port"
+      - "6379"
+      - "--cluster-announce-bus-port"
+      - "16379"
+    networks:
+      - redis-net
+
+  redis-node3:
+    image: redis:latest
+    command:
+      - redis-server
+      - "--port"
+      - "6379"
+      - "--cluster-enabled"
+      - "yes"
+      - "--cluster-config-file"
+      - "nodes.conf"
+      - "--cluster-node-timeout"
+      - "5000"
+      - "--appendonly"
+      - "yes"
+      - "--cluster-announce-ip"
+      - "redis-node3"
+      - "--cluster-announce-port"
+      - "6379"
+      - "--cluster-announce-bus-port"
+      - "16379"
+    networks:
+      - redis-net
+
+  cluster-setup:
+    image: redis:latest
+    depends_on:
+      - redis-node1
+      - redis-node2
+      - redis-node3
+    command:
+      - sh
+      - -c
+      - |
+        sleep 15 &&
+        redis-cli --cluster create \
+          redis-node1:6379 \
+          redis-node2:6379 \
+          redis-node3:6379 \
+          --cluster-replicas 0 \
+          --cluster-yes
+    networks:
+      - redis-net
+    restart: "no"
+
+networks:
+  redis-net:
+    driver: bridge
+

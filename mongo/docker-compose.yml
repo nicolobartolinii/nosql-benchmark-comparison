@@ -1,0 +1,93 @@
+# mongo/docker-compose.yml (Revisione 1)
+services:
+  # Config Servers Replica Set (cfgRS)
+  mongo-cfg1:
+    image: mongo:7.0 # Pinnata versione
+    container_name: mongo-cfg1 # Nome fisso
+    command: ["mongod", "--configsvr", "--replSet", "cfgRS", "--port", "27019", "--bind_ip_all"]
+    networks:
+      - mongo-net
+      - shared-net # Decommenta se usi rete esterna
+    volumes:
+      - mongo-cfg1-data:/data/configdb # Volume per dati config server
+    restart: always
+
+  mongo-cfg2:
+    image: mongo:7.0
+    container_name: mongo-cfg2
+    command: ["mongod", "--configsvr", "--replSet", "cfgRS", "--port", "27019", "--bind_ip_all"]
+    networks:
+      - mongo-net
+      - shared-net
+    volumes:
+      - mongo-cfg2-data:/data/configdb
+    restart: always
+
+  mongo-cfg3:
+    image: mongo:7.0
+    container_name: mongo-cfg3
+    command: ["mongod", "--configsvr", "--replSet", "cfgRS", "--port", "27019", "--bind_ip_all"]
+    networks:
+      - mongo-net
+      - shared-net
+    volumes:
+      - mongo-cfg3-data:/data/configdb
+    restart: always
+
+  # Shard Replica Set (shard1RS)
+  mongo-shard1a:
+    image: mongo:7.0
+    container_name: mongo-shard1a
+    command: ["mongod", "--shardsvr", "--replSet", "shard1RS", "--port", "27018", "--bind_ip_all"]
+    networks:
+      - mongo-net
+      - shared-net
+    volumes:
+      - mongo-shard1a-data:/data/db # Volume per dati shard
+    restart: always
+
+  mongo-shard1b:
+    image: mongo:7.0
+    container_name: mongo-shard1b
+    command: ["mongod", "--shardsvr", "--replSet", "shard1RS", "--port", "27018", "--bind_ip_all"]
+    networks:
+      - mongo-net
+      - shared-net
+    volumes:
+      - mongo-shard1b-data:/data/db
+    restart: always
+
+  # Mongos Router
+  mongo-mongos:
+    image: mongo:7.0
+    container_name: mongo-mongos
+    command: > # Comando multi-linea per leggibilità
+      mongos --configdb cfgRS/mongo-cfg1:27019,mongo-cfg2:27019,mongo-cfg3:27019
+      --bind_ip_all
+    ports:
+      - "27017:27017" # Porta esposta all'host
+    networks:
+      - mongo-net
+      - shared-net
+    depends_on: # Attende avvio (non prontezza) dei nodi
+      - mongo-cfg1
+      - mongo-cfg2
+      - mongo-cfg3
+      - mongo-shard1a
+      - mongo-shard1b
+    restart: always
+
+# Volumi nominati per persistere i dati
+volumes:
+  mongo-cfg1-data:
+  mongo-cfg2-data:
+  mongo-cfg3-data:
+  mongo-shard1a-data:
+  mongo-shard1b-data:
+
+# Rete interna per la comunicazione tra i container MongoDB
+networks:
+  mongo-net:
+    driver: bridge
+  shared-net: # Definisci se usi rete esterna condivisa con YCSB
+    external: true # Assumendo che 'shared-net' sia stata creata manualmente
