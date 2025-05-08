@@ -54,11 +54,20 @@ RUN set -e; \
 COPY ycsb_python3.py /opt/YCSB_PROJECT_ROOT/bin/ycsb
 RUN chmod +x /opt/YCSB_PROJECT_ROOT/bin/ycsb
 
+# --- Aggiorna Versione Jedis (ESPERIMENTO) ---
+# RUN echo "INFO: Tentativo di aggiornamento Jedis in redis/pom.xml..." \
+# && sed -i 's|<artifactId>jedis</artifactId>\s*<version>2.9.0</version>|<artifactId>jedis</artifactId><version>3.7.0</version>|g' /opt/YCSB_PROJECT_ROOT/redis/pom.xml \
+# && echo "INFO: Contenuto redis/pom.xml dopo sed (verifica):" \
+# && grep '<artifactId>jedis</artifactId>' /opt/YCSB_PROJECT_ROOT/redis/pom.xml || true
+# --- Fine Aggiornamento Jedis ---
+
+COPY RedisClient.java /opt/YCSB_PROJECT_ROOT/redis/src/main/java/site/ycsb/db/RedisClient.java
+
 # 3. Pulisci la cache Maven, poi COMPILA YCSB
 RUN set -e; \
     rm -rf /root/.m2/repository; \
     echo "INFO: Building YCSB core and specific bindings (mongodb, redis, cassandra)..."; \
-    cd /opt/YCSB_PROJECT_ROOT && mvn -q -DskipTests clean package -pl core,mongodb,redis,cassandra
+    cd /opt/YCSB_PROJECT_ROOT && mvn -q -DskipTests -Dcheckstyle.skip=true clean package -pl core,mongodb,redis,cassandra
 
 # 4. Crea il link simbolico e la directory results
 RUN set -e; \

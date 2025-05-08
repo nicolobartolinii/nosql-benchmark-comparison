@@ -1,97 +1,82 @@
-version: "3.8"
+# redis/docker-compose.yml
+networks:
+  redis-net:
+    driver: bridge
+  shared-net:
+    external: true
 
 services:
   redis-node1:
-    image: redis:latest
-    command:
-      - redis-server
-      - "--port"
-      - "6379"
-      - "--cluster-enabled"
-      - "yes"
-      - "--cluster-config-file"
-      - "nodes.conf"
-      - "--cluster-node-timeout"
-      - "5000"
-      - "--appendonly"
-      - "yes"
-      - "--cluster-announce-ip"
-      - "redis-node1"
-      - "--cluster-announce-port"
-      - "6379"
-      - "--cluster-announce-bus-port"
-      - "16379"
+    image: redis:7.2
+    container_name: redis-node1
+    hostname: redis-node1
+    command: >
+      redis-server --port 6379 --cluster-enabled yes
+      --cluster-config-file nodes.conf --cluster-node-timeout 5000
+      --cluster-announce-ip redis-node1
+      --cluster-announce-port 6379
+      --cluster-announce-bus-port 16379
+    volumes:
+      - redis-1-data:/data
     networks:
       - redis-net
+      - shared-net
+    restart: on-failure
 
   redis-node2:
-    image: redis:latest
-    command:
-      - redis-server
-      - "--port"
-      - "6379"
-      - "--cluster-enabled"
-      - "yes"
-      - "--cluster-config-file"
-      - "nodes.conf"
-      - "--cluster-node-timeout"
-      - "5000"
-      - "--appendonly"
-      - "yes"
-      - "--cluster-announce-ip"
-      - "redis-node2"
-      - "--cluster-announce-port"
-      - "6379"
-      - "--cluster-announce-bus-port"
-      - "16379"
+    image: redis:7.2
+    container_name: redis-node2
+    hostname: redis-node2
+    command: >
+      redis-server --port 6379 --cluster-enabled yes
+      --cluster-config-file nodes.conf --cluster-node-timeout 5000
+      --cluster-announce-ip redis-node2
+      --cluster-announce-port 6379
+      --cluster-announce-bus-port 16379
+    volumes:
+      - redis-2-data:/data
     networks:
       - redis-net
+      - shared-net
+    restart: on-failure
+    depends_on:
+      - redis-node1
 
   redis-node3:
-    image: redis:latest
-    command:
-      - redis-server
-      - "--port"
-      - "6379"
-      - "--cluster-enabled"
-      - "yes"
-      - "--cluster-config-file"
-      - "nodes.conf"
-      - "--cluster-node-timeout"
-      - "5000"
-      - "--appendonly"
-      - "yes"
-      - "--cluster-announce-ip"
-      - "redis-node3"
-      - "--cluster-announce-port"
-      - "6379"
-      - "--cluster-announce-bus-port"
-      - "16379"
+    image: redis:7.2
+    container_name: redis-node3
+    hostname: redis-node3
+    command: >
+      redis-server --port 6379 --cluster-enabled yes
+      --cluster-config-file nodes.conf --cluster-node-timeout 5000
+      --cluster-announce-ip redis-node3
+      --cluster-announce-port 6379
+      --cluster-announce-bus-port 16379
+    volumes:
+      - redis-3-data:/data
     networks:
       - redis-net
+      - shared-net
+    restart: on-failure
+    depends_on:
+      - redis-node1
+      - redis-node2
 
-  cluster-setup:
-    image: redis:latest
+  redis-cluster-setup:
+    image: redis:7.2
+    container_name: redis-cluster-setup
+    command: >
+      sh -c "echo 'INFO: Attendo 25 secondi che i nodi Redis si avviino...' && sleep 25 &&
+             echo 'INFO: Tento di creare il cluster...' &&
+             redis-cli --cluster create redis-node1:6379 redis-node2:6379 redis-node3:6379 --cluster-replicas 0 --cluster-yes"
+    networks:
+      - redis-net
     depends_on:
       - redis-node1
       - redis-node2
       - redis-node3
-    command:
-      - sh
-      - -c
-      - |
-        sleep 15 &&
-        redis-cli --cluster create \
-          redis-node1:6379 \
-          redis-node2:6379 \
-          redis-node3:6379 \
-          --cluster-replicas 0 \
-          --cluster-yes
-    networks:
-      - redis-net
-    restart: "no"
 
-networks:
-  redis-net:
-    driver: bridge
-
+volumes:
+  redis-1-data:
+  redis-2-data:
+  redis-3-data:

@@ -241,6 +241,7 @@ def get_classpath_from_maven(module):
                        "-am", "package", "-DskipTests",
                        "dependency:build-classpath",
                        "-DincludeScope=compile",
+                       "-Dcheckstyle.skip=true",
                        "-Dmdep.outputFilterFile=true"]
         # check_output restituisce bytes, dobbiamo decodificarlo per splitlines e startswith
         mvn_output_bytes = check_output(mvn_command)

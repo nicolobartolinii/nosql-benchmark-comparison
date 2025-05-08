@@ -1,6 +1,4 @@
 # cassandra/docker-compose.yml (Revisione basata sul file trovato)
-version: "3.8"
-
 networks:
   cassandra-net: # Rete interna per comunicazione tra nodi Cassandra
     driver: bridge
