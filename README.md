@@ -1,11 +1,11 @@
 # Comparazione Prestazioni NoSQL DBMS con YCSB
 
 Questo progetto confronta le prestazioni tecniche di tre tipi di DBMS NoSQL:
-*   **Key-value store:** Redis
+*   **Key-value store:** Redis (Cluster Mode)
 *   **Document store:** MongoDB (Sharded Cluster)
 *   **Column-family store:** Cassandra (Ring)
 
-Il framework di benchmarking utilizzato è Yahoo! Cloud Serving Benchmark (YCSB). Tutti i test vengono eseguiti in container Docker, sia in modalità cluster distribuito sia su hardware standardizzato (tramite limiti di risorse Docker), per normalizzare i risultati.
+Il framework di benchmarking utilizzato è Yahoo! Cloud Serving Benchmark (YCSB), versione 0.17.0. Tutti i test vengono eseguiti in container Docker, sia in modalità cluster distribuito sia su hardware standardizzato (tramite limiti di risorse Docker), per normalizzare i risultati.
 
 ## Struttura del Progetto
 
@@ -18,23 +18,26 @@ nosql-benchmark-comparison/
   ├─ cassandra/                ← Configurazione ring Cassandra
   │    └─ docker-compose.yml
   ├─ ycsb/                     ← Sorgenti YCSB, Dockerfile per build, script di esecuzione
-  │    ├─ Dockerfile
+  │    ├─ Dockerfile            # Include Cassandra(cqlsh), Mongo(mongosh), Python3 fix, RedisClient fix
   │    ├─ entrypoint.sh
-  │    ├─ run-mongo.sh
-  │    ├─ run-redis.sh
-  │    ├─ run-cassandra.sh
-  │    └─ ycsb_python3.py       # Script bin/ycsb corretto per Python 3
+  │    ├─ run-mongo.sh          # Script interno YCSB per test MongoDB
+  │    ├─ run-redis.sh          # Script interno YCSB per test Redis Cluster
+  │    ├─ run-cassandra.sh      # Script interno YCSB per test Cassandra
+  │    ├─ ycsb_python3.py       # Script bin/ycsb corretto per Python 3 (usato nel Dockerfile)
+  │    └─ RedisClient.java      # File sorgente RedisClient corretto (usato nel Dockerfile)
   ├─ results/                  ← Output dei test (file .txt e grafici futuri)
   ├─ .env.example              ← Template per le variabili d'ambiente
   ├─ .gitignore
   ├─ run_mongo_benchmarks.sh   ← Script orchestratore per MongoDB
-  └─ README.md
+  ├─ run_cassandra_benchmarks.sh ← Script orchestratore per Cassandra
+  ├─ run_redis_benchmarks.sh   ← Script orchestratore per Redis Cluster
+  └─ README.md                 # Questo file
 ```
 
 ## Prerequisiti
 
 *   Docker ([Installazione](https://docs.docker.com/get-docker/))
-*   Docker Compose ([Installazione](https://docs.docker.com/compose/install/)) (solitamente incluso con Docker Desktop)
+*   Docker Compose ([Installazione](https://docs.docker.com/compose/install/))
 *   `git` (per clonare il repository)
 *   Un editor di testo per il file `.env`
 
@@ -42,7 +45,7 @@ nosql-benchmark-comparison/
 
 1.  **Clonare il Repository:**
     ```bash
-    git clone https://github.com/nicolobartolinii/nosql-benchmark-comparison
+    git clone <URL_DEL_TUO_REPOSITORY>
     cd nosql-benchmark-comparison
     ```
 
@@ -51,7 +54,7 @@ nosql-benchmark-comparison/
     ```bash
     cp .env.example .env
     ```
-    Esempio di contenuto per `.env`:
+    Contenuto di `.env`:
     ```dotenv
     # Redis cluster nodes (usato da ycsb/run-redis.sh)
     REDIS_NODES=redis-node1:6379,redis-node2:6379,redis-node3:6379
@@ -64,68 +67,105 @@ nosql-benchmark-comparison/
     ```
 
 3.  **Costruire l'Immagine Docker di YCSB:**
-    Questo comando compila YCSB dai sorgenti (con le patch necessarie) e crea l'immagine Docker che verrà usata per eseguire i benchmark.
+    Questo comando compila YCSB 0.17.0 dai sorgenti, applica le patch necessarie per Python 3 e RedisClient, installa i client necessari (`mongosh`, `cqlsh` da Cassandra 4.1) e crea l'immagine Docker (`nosql-benchmark/ycsb`) che verrà usata per eseguire i benchmark.
     ```bash
+    # Potrebbe essere necessario eseguirlo con --no-cache se si modificano i file sorgente o script
     cd ycsb
-    docker build -t nosql-benchmark/ycsb .
+    docker build --no-cache -t nosql-benchmark/ycsb .
     cd ..
     ```
 
 4.  **Creare la Rete Docker Condivisa (se non già presente):**
-    Gli script di orchestrazione e i `docker-compose.yml` potrebbero aspettarsi una rete condivisa per la comunicazione tra il container YCSB e i cluster dei database.
+    Gli script di orchestrazione e i `docker-compose.yml` si aspettano una rete condivisa per la comunicazione tra il container YCSB e i cluster dei database.
     ```bash
     docker network create shared-net || true
     ```
-    Assicurati che i file `docker-compose.yml` dei database siano configurati per connettersi a questa rete (es. `shared-net`).
+    Assicurati che i file `docker-compose.yml` dei database siano configurati per connettersi a questa rete (`shared-net`).
 
 ## Esecuzione dei Benchmark
 
-Verranno forniti script orchestratori per ogni database (es. `run_mongo_benchmarks.sh`). Questi script gestiscono l'avvio del cluster del database, l'esecuzione dei test YCSB (tutti i workload rilevanti, con ripetizioni) e la pulizia finale.
+Sono forniti script orchestratori per ogni database. Questi script gestiscono l'avvio del cluster del database, l'esecuzione dei test YCSB (tutti i workload standard YCSB A-F, con 3 ripetizioni e 10.000 record/operazioni ciascuno) e la pulizia finale.
 
-### Esempio: Esecuzione Benchmark per MongoDB
+**Importante:** Eseguire un solo script di benchmark alla volta, poiché avviano e fermano i rispettivi cluster di database.
 
-Lo script `run_mongo_benchmarks.sh` automatizza l'intero processo per MongoDB.
+### 1. Esecuzione Benchmark per MongoDB
 
-1.  **Assicurati che Docker sia in esecuzione.**
-2.  **Dalla root del progetto, rendi lo script eseguibile (solo la prima volta):**
-    ```bash
-    chmod +x run_mongo_benchmarks.sh
-    ```
-3.  **Avvia i benchmark per MongoDB:**
-    *   Per eseguire tutti i workload YCSB di default (A-F), con 3 ripetizioni ciascuno e 10.000 record:
-        ```bash
-        ./run_mongo_benchmarks.sh
-        ```
-    *   Per eseguire solo workload specifici (es. `workloada` e `workloadc`):
-        ```bash
-        ./run_mongo_benchmarks.sh workloada workloadc
-        ```
+```bash
+# Assicurati che Docker sia in esecuzione.
+# Dalla root del progetto:
 
-Lo script si occuperà di:
-*   Pulire eventuali istanze precedenti del cluster MongoDB.
-*   Avviare il cluster MongoDB sharded usando `mongo/docker-compose.yml`.
-*   Inizializzare i replica set e lo sharding.
-*   Lanciare il container YCSB (`nosql-benchmark/ycsb`) che eseguirà lo script `ycsb/run-mongo.sh`.
-    *   `ycsb/run-mongo.sh` ciclerà attraverso i workload, pulirà il DB YCSB prima di ogni `load`, ed eseguirà le fasi `load` e `run`.
-*   Salvare i risultati nella directory `results/`.
-*   Arrestare e pulire il cluster MongoDB al termine.
+# Rendi lo script eseguibile (solo la prima volta)
+chmod +x run_mongo_benchmarks.sh
 
-*(Sezioni simili verranno aggiunte per Redis e Cassandra una volta implementati i rispettivi script orchestratori).*
+# Avvia i benchmark per MongoDB (tutti i workload A-F, 3 ripetizioni)
+./run_mongo_benchmarks.sh
+
+# Per eseguire solo workload specifici (es. workloada e workloadc):
+# ./run_mongo_benchmarks.sh workloada workloadc
+```
+
+### 2. Esecuzione Benchmark per Cassandra
+
+```bash
+# Assicurati che Docker sia in esecuzione.
+# Dalla root del progetto:
+
+# Rendi lo script eseguibile (solo la prima volta)
+chmod +x run_cassandra_benchmarks.sh
+
+# Avvia i benchmark per Cassandra (tutti i workload A-F, 3 ripetizioni)
+./run_cassandra_benchmarks.sh
+
+# Per eseguire solo workload specifici (es. workloada e workloadc):
+# ./run_cassandra_benchmarks.sh workloada workloadc
+```
+
+### 3. Esecuzione Benchmark per Redis (Cluster Mode)
+
+```bash
+# Assicurati che Docker sia in esecuzione.
+# Dalla root del progetto:
+
+# Rendi lo script eseguibile (solo la prima volta)
+chmod +x run_redis_benchmarks.sh
+
+# Avvia i benchmark per Redis Cluster (tutti i workload A-F, 3 ripetizioni)
+./run_redis_benchmarks.sh
+
+# Per eseguire solo workload specifici (es. workloada e workloadc):
+# ./run_redis_benchmarks.sh workloada workloadc
+```
+
+## Flusso di Esecuzione (Per Ogni Database)
+
+Gli script orchestratori (`run_*.sh` nella root) eseguono i seguenti passi:
+1.  **Pulizia Preliminare:** Ferma e rimuove eventuali container/volumi del database da esecuzioni precedenti (`docker compose down -v`).
+2.  **Avvio Cluster:** Avvia il cluster del database usando il rispettivo file `[database]/docker-compose.yml`.
+3.  **Attesa/Inizializzazione:** Attende che il cluster sia stabile e pronto (con controlli specifici per MongoDB, Cassandra e Redis). Per MongoDB, esegue anche l'inizializzazione dei replica set e dello sharding.
+4.  **Esecuzione YCSB:** Lancia un container Docker dall'immagine `nosql-benchmark/ycsb`, passando le variabili d'ambiente e montando la directory `results`. Questo container esegue lo script `ycsb/run-[database].sh` appropriato.
+5.  **Script Interno YCSB (`ycsb/run-*.sh`):**
+    *   Cicla attraverso i workload YCSB richiesti (A-F di default).
+    *   Per ogni workload, cicla per il numero di ripetizioni (3 di default).
+    *   **Prima di ogni fase `load`:** Pulisce lo stato precedente (es. `db.dropDatabase()` per Mongo, `DROP/CREATE KEYSPACE/TABLE` per Cassandra; Redis viene pulito dal riavvio del cluster).
+    *   Esegue la fase `load` di YCSB con i parametri configurati (10k record, batch size, ecc.).
+    *   Esegue la fase `run` (transazioni) di YCSB (10k operazioni).
+    *   Salva l'output di `load` e `run` in file separati nella directory `/results` (montata dall'host).
+6.  **Pulizia Finale:** Ferma e rimuove i container e i volumi del database (`docker compose down -v`).
 
 ## Risultati
 
-I file di output grezzi di YCSB (formato testo) verranno salvati nella directory `results/`.
+I file di output grezzi di YCSB (formato testo) vengono salvati nella directory `results/` sull'host.
 I nomi dei file seguiranno un pattern simile a: `[database]_[workload]_[fase]_[ripetizione]_[timestamp].txt`.
 
-Esempio: `mongo_workloada_run_rep1_20230508103000.txt`
+Esempio: `cassandra_workloada_run_rep1_20250508141636.txt`
 
 L'analisi e la visualizzazione di questi risultati (grafici, tabelle comparative) sono fasi successive del progetto.
 
 ## TODO / Prossimi Passi
 
-*   Implementare gli script orchestratori `run_redis_benchmarks.sh` e `run_cassandra_benchmarks.sh`.
-*   Configurare e testare i cluster per Redis e Cassandra.
-*   Adattare gli script `ycsb/run-redis.sh` e `ycsb/run-cassandra.sh` per l'automazione (cicli, parametri, pulizia).
-*   Implementare la limitazione delle risorse Docker nei file `docker-compose.yml` per standardizzare l'hardware.
-*   Sviluppare script per l'estrazione dei dati chiave e la generazione di grafici comparativi.
+*   Eseguire i cicli completi di benchmark per tutti e tre i database.
+*   Concordare e applicare i limiti di risorse Docker nei `docker-compose.yml`.
+*   **Rieseguire tutti i benchmark** con i limiti di risorse applicati.
+*   Sviluppare script/metodi per estrarre i dati chiave (Throughput, Latenze) dai file di risultati.
+*   Generare grafici comparativi e analizzare i risultati.
 *   Redigere il report finale del progetto.
