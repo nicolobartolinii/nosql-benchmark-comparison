@@ -1,6 +1,7 @@
 # ycsb/Dockerfile
 FROM eclipse-temurin:17-jdk-jammy
 ARG YCSB_TAG=0.17.0
+ARG CASSANDRA_VERSION=4.1.8
 
 WORKDIR /opt
 
@@ -23,6 +24,18 @@ RUN wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | gpg --dearmor 
  && apt-get update \
  && apt-get install -y mongodb-mongosh \
  && rm -rf /var/lib/apt/lists/*
+
+# --- Installazione di Cassandra ${CASSANDRA_VERSION} per cqlsh ---
+    RUN echo "INFO: Downloading Cassandra ${CASSANDRA_VERSION} for cqlsh..." \
+    && CASSANDRA_DOWNLOAD_URL="https://dlcdn.apache.org/cassandra/${CASSANDRA_VERSION}/apache-cassandra-${CASSANDRA_VERSION}-bin.tar.gz" \
+    && wget -q "${CASSANDRA_DOWNLOAD_URL}" -O /tmp/cassandra.tar.gz \
+    && echo "INFO: Extracting Cassandra..." \
+    && tar -xzf /tmp/cassandra.tar.gz -C /opt \
+    && mv /opt/apache-cassandra-${CASSANDRA_VERSION} /opt/cassandra \
+    && rm /tmp/cassandra.tar.gz
+   # Aggiungi Cassandra bin alla PATH per usare cqlsh direttamente
+   ENV PATH="${PATH}:/opt/cassandra/bin"
+   # --- Fine Installazione Cassandra ---
 
 # 1. Clone YCSB
 RUN set -e; \
