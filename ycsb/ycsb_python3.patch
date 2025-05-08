@@ -1,0 +1,219 @@
+--- ycsb_original.py	2025-05-08 11:08:07
++++ ycsb_python3.py	2025-05-08 10:53:04
+@@ -28,7 +28,8 @@
+     mod = __import__('argparse')
+     import argparse
+ except ImportError:
+-    print >> sys.stderr, '[ERROR] argparse not found. Try installing it via "pip".'
++    # print >> sys.stderr, '[ERROR] argparse not found. Try installing it via "pip".' # Python 2
++    print('[ERROR] argparse not found. Try installing it via "pip".', file=sys.stderr) # Python 3
+     exit(1)
+ 
+ BASE_URL = "https://github.com/brianfrankcooper/YCSB/tree/master/"
+@@ -121,32 +122,45 @@
+ }
+ 
+ def usage():
+-    output = io.BytesIO()
+-    print >> output, "%s command database [options]" % sys.argv[0]
++    # output = io.BytesIO() # BytesIO non è direttamente stampabile con print, meglio StringIO per testo
++    output = io.StringIO() # Python 3
++    # print >> output, "%s command database [options]" % sys.argv[0] # Python 2
++    print("%s command database [options]" % sys.argv[0], file=output) # Python 3
+ 
+-    print >> output, "\nCommands:"
++    # print >> output, "\nCommands:" # Python 2
++    print("\nCommands:", file=output) # Python 3
+     for command in sorted(COMMANDS.keys()):
+-        print >> output, "    %s %s" % (command.ljust(14),
+-                                        COMMANDS[command]["description"])
+-
+-    print >> output, "\nDatabases:"
++        # print >> output, "    %s %s" % (command.ljust(14), COMMANDS[command]["description"]) # Python 2
++        print("    %s %s" % (command.ljust(14), COMMANDS[command]["description"]), file=output) # Python 3
++        
++    # print >> output, "\nDatabases:" # Python 2
++    print("\nDatabases:", file=output) # Python 3
+     for db in sorted(DATABASES.keys()):
+-        print >> output, "    %s %s" % (db.ljust(14), BASE_URL +
+-                                        db.split("-")[0])
++        # print >> output, "    %s %s" % (db.ljust(14), BASE_URL + db.split("-")[0]) # Python 2
++        print("    %s %s" % (db.ljust(14), BASE_URL + db.split("-")[0]), file=output) # Python 3
+ 
+-    print >> output, "\nOptions:"
++    # print >> output, "\nOptions:" # Python 2
++    print("\nOptions:", file=output) # Python 3
+     for option in sorted(OPTIONS.keys()):
+-        print >> output, "    %s %s" % (option.ljust(14), OPTIONS[option])
++        # print >> output, "    %s %s" % (option.ljust(14), OPTIONS[option]) # Python 2
++        print("    %s %s" % (option.ljust(14), OPTIONS[option]), file=output) # Python 3
+ 
+-    print >> output, """\nWorkload Files:
++    # print >> output, """\nWorkload Files:
++    # There are various predefined workloads under workloads/ directory.
++    # See https://github.com/brianfrankcooper/YCSB/wiki/Core-Properties
++    # for the list of workload properties.""" # Python 2
++    print("""\nWorkload Files:
+     There are various predefined workloads under workloads/ directory.
+     See https://github.com/brianfrankcooper/YCSB/wiki/Core-Properties
+-    for the list of workload properties."""
++    for the list of workload properties.""", file=output) # Python 3
+ 
+     return output.getvalue()
+ 
+ # Python 2.6 doesn't have check_output. Add the method as it is in Python 2.7
+ # Based on https://github.com/python/cpython/blob/2.7/Lib/subprocess.py#L545
++# Questa funzione check_output è già compatibile con Python 3 se usata come in Python 2.7
++# Tuttavia, la gestione dell'output in Python 3 spesso preferisce stringhe di testo (decode)
++# Ma per ora lasciamola così, YCSB potrebbe aspettarsi bytes.
+ def check_output(*popenargs, **kwargs):
+     r"""Run command with arguments and return its output as a byte string.
+ 
+@@ -157,15 +171,15 @@
+     The arguments are the same as for the Popen constructor.  Example:
+ 
+     >>> check_output(["ls", "-l", "/dev/null"])
+-    'crw-rw-rw- 1 root root 1, 3 Oct 18  2007 /dev/null\n'
++    b'crw-rw-rw- 1 root root 1, 3 Oct 18  2007 /dev/null\n'
+ 
+     The stdout argument is not allowed as it is used internally.
+     To capture standard error in the result, use stderr=STDOUT.
+ 
+     >>> check_output(["/bin/sh", "-c",
+     ...               "ls -l non_existent_file ; exit 0"],
+-    ...              stderr=STDOUT)
+-    'ls: non_existent_file: No such file or directory\n'
++    ...              stderr=subprocess.STDOUT)
++    b'ls: non_existent_file: No such file or directory\n'
+     """
+     if 'stdout' in kwargs:
+         raise ValueError('stdout argument not allowed, it will be overridden.')
+@@ -176,19 +190,25 @@
+         cmd = kwargs.get("args")
+         if cmd is None:
+             cmd = popenargs[0]
++        # In Python 3, CalledProcessError.output è in bytes. Se l'output di mvn è testo,
++        # potrebbe essere necessario decodificarlo prima di concatenarlo con altre stringhe.
++        # Per ora, manteniamo il comportamento originale.
+         error = subprocess.CalledProcessError(retcode, cmd)
+-        error.output = output
++        error.output = output 
+         raise error
+     return output
+ 
+ def debug(message):
+-    print >> sys.stderr, "[DEBUG] ", message
++    # print >> sys.stderr, "[DEBUG] ", message # Python 2
++    print("[DEBUG] ", message, file=sys.stderr) # Python 3
+ 
+ def warn(message):
+-    print >> sys.stderr, "[WARN] ", message
++    # print >> sys.stderr, "[WARN] ", message # Python 2
++    print("[WARN] ", message, file=sys.stderr) # Python 3
+ 
+ def error(message):
+-    print >> sys.stderr, "[ERROR] ", message
++    # print >> sys.stderr, "[ERROR] ", message # Python 2
++    print("[ERROR] ", message, file=sys.stderr) # Python 3
+ 
+ def find_jars(dir, glob='*.jar'):
+     jars = []
+@@ -199,7 +219,8 @@
+ 
+ def get_ycsb_home():
+     dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+-    while "LICENSE.txt" not in os.listdir(dir):
++    # In Python 3, listdir potrebbe restituire stringhe, quindi la verifica è ok
++    while "LICENSE.txt" not in os.listdir(dir): 
+         dir = os.path.join(dir, os.path.pardir)
+     return os.path.abspath(dir)
+ 
+@@ -216,27 +237,34 @@
+     try:
+         debug("Running 'mvn -pl site.ycsb:" + module + " -am package -DskipTests "
+               "dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'")
+-        mvn_output = check_output(["mvn", "-pl", "site.ycsb:" + module,
+-                                   "-am", "package", "-DskipTests",
+-                                   "dependency:build-classpath",
+-                                   "-DincludeScope=compile",
+-                                   "-Dmdep.outputFilterFile=true"])
++        mvn_command = ["mvn", "-B", "-pl", "site.ycsb:" + module, # Aggiunto -B per batch mode
++                       "-am", "package", "-DskipTests",
++                       "dependency:build-classpath",
++                       "-DincludeScope=compile",
++                       "-Dmdep.outputFilterFile=true"]
++        # check_output restituisce bytes, dobbiamo decodificarlo per splitlines e startswith
++        mvn_output_bytes = check_output(mvn_command)
++        mvn_output = mvn_output_bytes.decode('utf-8') 
++
+         # the above outputs a "classpath=/path/tojar:/path/to/other/jar" for each module
+         # the last module will be the datastore binding
+         line = [x for x in mvn_output.splitlines() if x.startswith("classpath=")][-1:]
+         return line[0][len("classpath="):]
+-    except subprocess.CalledProcessError, err:
++    # except subprocess.CalledProcessError, err: # Python 2
++    except subprocess.CalledProcessError as err: # Python 3
++        # err.output è in bytes, decodifichiamolo per la stampa se possibile
++        mvn_err_output = err.output.decode('utf-8', errors='replace') if err.output else ""
+         error("Attempting to generate a classpath from Maven failed "
+               "with return code '" + str(err.returncode) + "'. The output from "
+               "Maven follows, try running "
+-              "'mvn -DskipTests package dependency:build=classpath' on your "
++              "'mvn -DskipTests package dependency:build-classpath' on your "
+               "own and correct errors." + os.linesep + os.linesep + "mvn output:" + os.linesep
+-              + err.output)
++              + mvn_err_output) # Usiamo l'output decodificato
+         sys.exit(err.returncode)
+ 
+ def main():
+     p = argparse.ArgumentParser(
+-            usage=usage(),
++            usage=usage(), # usage() ora restituisce una stringa, va bene
+             formatter_class=argparse.RawDescriptionHelpFormatter)
+     p.add_argument('-cp', dest='classpath', help="""Additional classpath
+                    entries, e.g.  '-cp /tmp/hbase-1.0.1.1/conf'. Will be
+@@ -248,7 +276,19 @@
+                    help="""Command to run.""")
+     p.add_argument("database", choices=sorted(DATABASES),
+                    help="""Database to test.""")
+-    args, remaining = p.parse_known_args()
++    
++    # In Python 3, getopt.GetoptError non è più un alias per argparse.ArgumentError,
++    # quindi non c'è bisogno di catturarlo specificamente se si usa solo argparse.
++    # Il parsing di argparse solleva eccezioni specifiche di argparse.
++    try:
++        args, remaining = p.parse_known_args()
++    except SystemExit as e: # argparse solleva SystemExit in caso di errore di parsing (es. --help)
++        # Se l'errore è dovuto a --help o un errore di parsing, usage() è già stato stampato.
++        # Se vogliamo un comportamento specifico, lo gestiamo qui.
++        # Per ora, lasciamo che SystemExit termini lo script come previsto.
++        raise e
++
++
+     ycsb_home = get_ycsb_home()
+ 
+     # Use JAVA_HOME to find java binary if set, otherwise just use PATH.
+@@ -333,10 +373,13 @@
+                      main_classname, "-db", db_classname] + remaining)
+     if command:
+         ycsb_command.append(command)
+-    print >> sys.stderr, " ".join(ycsb_command)
++    
++    # print >> sys.stderr, " ".join(ycsb_command) # Python 2
++    print(" ".join(ycsb_command), file=sys.stderr) # Python 3
+     try:
+-        return subprocess.call(ycsb_command)
+-    except OSError as e:
++        # subprocess.call è ok
++        return subprocess.call(ycsb_command) 
++    except OSError as e: # Sintassi Python 3 per except
+         if e.errno == errno.ENOENT:
+             error('Command failed. Is java installed and on your PATH?')
+             return 1
+@@ -344,4 +387,4 @@
+             raise
+ 
+ if __name__ == '__main__':
+-    sys.exit(main())
++    sys.exit(main())
+\ No newline at end of file
