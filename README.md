@@ -13,7 +13,7 @@ Il framework di benchmarking utilizzato è Yahoo! Cloud Serving Benchmark (YCSB)
 nosql-benchmark-comparison/
   ├─ redis/                    ← Configurazione cluster Redis
   │    └─ docker-compose.yml
-  ├─ mongo/                    ← Configurazione cluster MongoDB sharded
+  ├─ mongo/                    ← Configurazione cluster MongoDB sharded (con 2 shard)
   │    └─ docker-compose.yml
   ├─ cassandra/                ← Configurazione ring Cassandra
   │    └─ docker-compose.yml
@@ -141,7 +141,7 @@ chmod +x run_redis_benchmarks.sh
 Gli script orchestratori (`run_*.sh` nella root) eseguono i seguenti passi:
 1.  **Pulizia Preliminare:** Ferma e rimuove eventuali container/volumi del database da esecuzioni precedenti (`docker compose down -v`).
 2.  **Avvio Cluster:** Avvia il cluster del database usando il rispettivo file `[database]/docker-compose.yml`.
-3.  **Attesa/Inizializzazione:** Attende che il cluster sia stabile e pronto (con controlli specifici per MongoDB, Cassandra e Redis). Per MongoDB, esegue anche l'inizializzazione dei replica set e dello sharding.
+3.  **Attesa/Inizializzazione:** Attende che il cluster sia stabile e pronto (con controlli specifici per MongoDB, Cassandra e Redis). Per MongoDB, esegue anche l'inizializzazione dei replica set per i due shard e l'aggiunta degli shard al router.
 4.  **Esecuzione YCSB:** Lancia un container Docker dall'immagine `nosql-benchmark/ycsb`, passando le variabili d'ambiente e montando la directory `results`. Questo container esegue lo script `ycsb/run-[database].sh` appropriato.
 5.  **Script Interno YCSB (`ycsb/run-*.sh`):**
     *   Cicla attraverso i workload YCSB richiesti (A-F di default).

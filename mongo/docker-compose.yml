@@ -57,6 +57,29 @@ services:
       - mongo-shard1b-data:/data/db
     restart: always
 
+  # Shard Replica Set (shard2RS)
+  mongo-shard2a:
+    image: mongo:7.0
+    container_name: mongo-shard2a
+    command: ["mongod", "--shardsvr", "--replSet", "shard2RS", "--port", "27020", "--bind_ip_all"]
+    networks:
+      - mongo-net
+      - shared-net
+    volumes:
+      - mongo-shard2a-data:/data/db
+    restart: always
+
+  mongo-shard2b:
+    image: mongo:7.0
+    container_name: mongo-shard2b
+    command: ["mongod", "--shardsvr", "--replSet", "shard2RS", "--port", "27020", "--bind_ip_all"]
+    networks:
+      - mongo-net
+      - shared-net
+    volumes:
+      - mongo-shard2b-data:/data/db
+    restart: always
+
   # Mongos Router
   mongo-mongos:
     image: mongo:7.0
@@ -75,6 +98,8 @@ services:
       - mongo-cfg3
       - mongo-shard1a
       - mongo-shard1b
+      - mongo-shard2a
+      - mongo-shard2b
     restart: always
 
 # Volumi nominati per persistere i dati
@@ -84,6 +109,8 @@ volumes:
   mongo-cfg3-data:
   mongo-shard1a-data:
   mongo-shard1b-data:
+  mongo-shard2a-data:
+  mongo-shard2b-data:
 
 # Rete interna per la comunicazione tra i container MongoDB
 networks:

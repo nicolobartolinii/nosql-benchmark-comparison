@@ -43,7 +43,7 @@ for workload_file in "${workloads_to_run[@]}"; do
             -p operationcount=${OPERATION_COUNT} \
             -p mongodb.url="${MONGO_URL}" \
             -p mongodb.batchsize=${MONGO_BATCH_SIZE} \
-            > "${LOAD_OUTPUT_FILE}" 2>&1
+            > "${LOAD_OUTPUT_FILE}"
         
         if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
             echo "ERROR [${DB_NAME}]: LOAD fallito per ${workload_file}, Rep ${rep}. Vedi ${LOAD_OUTPUT_FILE}"

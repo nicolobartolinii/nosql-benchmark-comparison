@@ -29,7 +29,11 @@ function start_mongo_cluster() {
     docker exec -it mongo-shard1a mongosh --quiet --port 27018 --eval 'try { rs.initiate({_id:"shard1RS",members:[{_id:0,host:"mongo-shard1a:27018"},{_id:1,host:"mongo-shard1b:27018"}]}) } catch (e) { if (e.codeName && e.codeName.toLowerCase().includes("alreadyinitialized")) { print("INFO: shard1RS già inizializzato."); } else { throw e; } }'
     sleep 10
 
-    echo "INFO: Tentativo di aggiunta dello shard al router mongos..."
+    echo "INFO: Tentativo di inizializzazione Shard Replica Set (shard2RS)..."
+    docker exec -it mongo-shard2a mongosh --quiet --port 27020 --eval 'try { rs.initiate({_id:"shard2RS",members:[{_id:0,host:"mongo-shard2a:27020"},{_id:1,host:"mongo-shard2b:27020"}]}) } catch (e) { if (e.codeName && e.codeName.toLowerCase().includes("alreadyinitialized")) { print("INFO: shard2RS già inizializzato."); } else { throw e; } }'
+    sleep 10
+
+    echo "INFO: Tentativo di aggiunta dello shard1RS al router mongos..."
     # Per sh.addShard(), l'idempotenza è più difficile da gestire con un semplice try-catch perché
     # potrebbe fallire per vari motivi se lo shard è già aggiunto o in uno stato intermedio.
     # Un modo è controllare prima sh.status(). Per ora, proviamo a eseguirlo.
@@ -47,6 +51,14 @@ function start_mongo_cluster() {
         sleep 2
         docker exec -it mongo-mongos mongosh --port 27017 --eval 'sh.status()' || echo "ERROR: Impossibile ottenere sh.status()"
         echo "WARN: Proseguo comunque, ma lo sharding potrebbe non essere configurato correttamente."
+    fi
+    
+    echo "INFO: Tentativo di aggiunta dello shard2RS al router mongos..."
+    if ! docker exec -it mongo-mongos mongosh --port 27017 --eval 'sh.addShard("shard2RS/mongo-shard2a:27020,mongo-shard2b:27020")'; then
+        echo "WARN: sh.addShard per shard2RS è fallito. Controllo sh.status()..."
+        sleep 2
+        docker exec -it mongo-mongos mongosh --port 27017 --eval 'sh.status()' || echo "ERROR: Impossibile ottenere sh.status()"
+        echo "WARN: Proseguo comunque, ma lo sharding potrebbe non essere configurato correttamente per shard2RS."
     fi
     
     sleep 5
