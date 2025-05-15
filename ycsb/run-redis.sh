@@ -1,89 +1,92 @@
 #!/bin/bash
-set -euo pipefail # Aggiunto -x per debug se necessario
+set -euo pipefail
 
-# --- Configurazione Test ---
-DB_NAME="redis"
-REPETITIONS=3
-RECORD_COUNT=10000
-OPERATION_COUNT=10000
-# Redis non ha un batch size configurabile via YCSB nello stesso modo
-# Usa pipeline internamente, ma non c'è un parametro -p per il batch
+# --- Script Parameters (Passed as arguments) ---
+# $1: WORKLOAD_NAME
+# $2: REP_NUM
+# $3: RECORD_COUNT
+# $4: OPERATION_COUNT
+# $5: FIELD_COUNT
+# $6: FIELD_LENGTH
+# $7: READ_ALL_FIELDS (true/false)
+# $8: DB_USER_SUBDIR
 
-DEFAULT_WORKLOADS=("workloada" "workloadb" "workloadc" "workloadd" "workloade" "workloadf")
-# --- Fine Configurazione ---
-
-# In ycsb/run-redis.sh
-[ -z "${REDIS_NODES-}" ] && { echo "ERROR: REDIS_NODES not set for ${DB_NAME}" >&2; exit 1; }
-echo "DEBUG [${DB_NAME}]: Valore ricevuto per REDIS_NODES='${REDIS_NODES}'"
-
-declare -a workloads_to_run
-if [ "$#" -ge 1 ]; then
-    workloads_to_run=("$@")
-    echo "INFO [${DB_NAME}]: Esecuzione workload specifici: ${workloads_to_run[*]}"
-else
-    workloads_to_run=("${DEFAULT_WORKLOADS[@]}")
-    echo "INFO [${DB_NAME}]: Esecuzione workload di default: ${workloads_to_run[*]}"
+if [ "$#" -ne 8 ]; then
+    echo "ERROR: Illegal number of parameters. Expected 8." >&2
+    echo "Usage: $0 WORKLOAD_NAME REP_NUM RECORD_COUNT OPERATION_COUNT FIELD_COUNT FIELD_LENGTH READ_ALL_FIELDS DB_USER_SUBDIR" >&2
+    exit 1
 fi
 
-# --- Pulizia (Assumiamo che venga fatta esternamente con docker-compose down/up) ---
-# Se servisse pulire un cluster attivo, useremmo FLUSHALL su ogni nodo
-# echo "INFO [${DB_NAME}]: Pulizia Redis Cluster..."
-# IFS=',' read -ra HOST_PORTS <<< "$REDIS_NODES"
-# for hp in "${HOST_PORTS[@]}"; do
-#   host=$(echo "$hp" | cut -d: -f1)
-#   port=$(echo "$hp" | cut -d: -f2)
-#   echo "INFO [${DB_NAME}]: Eseguo FLUSHALL su ${host}:${port}..."
-#   redis-cli -h "$host" -p "$port" -c FLUSHALL || echo "WARN: FLUSHALL fallito su ${host}:${port}"
-# done
-# echo "INFO [${DB_NAME}]: Pulizia Redis Cluster completata."
-# sleep 5
-# --- Fine Pulizia ---
+WORKLOAD_NAME="$1"
+REP_NUM="$2"
+RECORD_COUNT="$3"
+OPERATION_COUNT="$4"
+FIELD_COUNT="$5"
+FIELD_LENGTH="$6"
+READ_ALL_FIELDS_BOOL="$7"
+DB_USER_SUBDIR="$8"
 
-for workload_file in "${workloads_to_run[@]}"; do
-    echo "INFO [${DB_NAME}]: Inizio workload ${workload_file}"
-    for (( rep=1; rep<=${REPETITIONS}; rep++ )); do
-        echo "INFO [${DB_NAME}]: Workload ${workload_file}, Ripetizione ${rep}/${REPETITIONS}"
+# --- Static Redis Config ---
+DB_NAME="redis"
+YCSB_PATH="./bin/ycsb"
+WORKLOAD_PATH_PREFIX="workloads/"
 
-        LOAD_OUTPUT_FILE="/results/${DB_NAME}_${workload_file}_load_rep${rep}_$(date +%Y%m%d%H%M%S).txt"
-        echo "INFO [${DB_NAME}]: Esecuzione LOAD (${workload_file}, Rep ${rep}). Output: ${LOAD_OUTPUT_FILE}"
-        ./bin/ycsb load redis -s \
-            -P "workloads/${workload_file}" \
-            -p redis.hosts="${REDIS_NODES}" \
-            -p redis.cluster=true \
-            -p recordcount=${RECORD_COUNT} \
-            -p operationcount=${OPERATION_COUNT} \
-            > "${LOAD_OUTPUT_FILE}" 2>&1
+# --- Environment Check ---
+[ -z "${REDIS_NODES-}" ] && { echo "ERROR: REDIS_NODES not set for ${DB_NAME}" >&2; exit 1; }
+echo "DEBUG [${DB_NAME}]: Received REDIS_NODES='${REDIS_NODES}'"
 
-        if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
-            echo "ERROR [${DB_NAME}]: LOAD fallito per ${workload_file}, Rep ${rep}. Vedi ${LOAD_OUTPUT_FILE}"
-            tail -n 20 "${LOAD_OUTPUT_FILE}"
-            # Per Redis, potremmo voler continuare anche se il load fallisce parzialmente
-            # perché il run potrebbe funzionare sui dati caricati.
-            # Ma per ora, continuiamo al prossimo ciclo.
-            continue
-        fi
-        echo "INFO [${DB_NAME}]: LOAD completato."
+echo "INFO [${DB_NAME}]: Starting test run for ${WORKLOAD_NAME}, Rep ${REP_NUM}"
+echo "INFO [${DB_NAME}]: Params: RC=${RECORD_COUNT}, OC=${OPERATION_COUNT}, FC=${FIELD_COUNT}, FL=${FIELD_LENGTH}, RAF=${READ_ALL_FIELDS_BOOL}, UserSubdir=${DB_USER_SUBDIR}"
 
-        RUN_OUTPUT_FILE="/results/${DB_NAME}_${workload_file}_run_rep${rep}_$(date +%Y%m%d%H%M%S).txt"
-        echo "INFO [${DB_NAME}]: Esecuzione RUN (${workload_file}, Rep ${rep}). Output: ${RUN_OUTPUT_FILE}"
-        ./bin/ycsb run redis -s \
-            -P "workloads/${workload_file}" \
-            -p redis.hosts="${REDIS_NODES}" \
-            -p redis.cluster=true \
-            -p recordcount=${RECORD_COUNT} \
-            -p operationcount=${OPERATION_COUNT} \
-            > "${RUN_OUTPUT_FILE}" 2>&1
+# --- Timestamp & Output Dir ---
+GENERATED_TIMESTAMP=$(date -u -d "+2 hours" +%Y-%m-%d_%H-%M-%S)
+OUTPUT_SUBDIR_PARAMS="rc${RECORD_COUNT}_oc${OPERATION_COUNT}_fc${FIELD_COUNT}_fl${FIELD_LENGTH}_raf${READ_ALL_FIELDS_BOOL}"
+OUTPUT_DIR="/results/${DB_USER_SUBDIR}/${DB_NAME}/${WORKLOAD_NAME}/${OUTPUT_SUBDIR_PARAMS}"
 
-        if ! grep -q "\[OVERALL\], RunTime(ms)" "${RUN_OUTPUT_FILE}"; then
-            echo "ERROR [${DB_NAME}]: RUN fallito per ${workload_file}, Rep ${rep}. Vedi ${RUN_OUTPUT_FILE}"
-            tail -n 20 "${RUN_OUTPUT_FILE}"
-        fi
-        echo "INFO [${DB_NAME}]: RUN completato."
+echo "INFO [${DB_NAME}]: Creating output directory: ${OUTPUT_DIR}"
+mkdir -p "${OUTPUT_DIR}"
 
-        echo "INFO [${DB_NAME}]: Ripetizione ${rep}/${REPETITIONS} per ${workload_file} completata."
-        sleep 5 # Breve pausa tra ripetizioni
-    done
-    echo "INFO [${DB_NAME}]: Workload ${workload_file} completato."
-    sleep 10 # Pausa tra workload
-done
-echo "INFO [${DB_NAME}]: Tutti i test completati."
+# Note: Redis data is flushed by tearing down and restarting the cluster in the orchestrator script.
+# No explicit FLUSHALL needed here if orchestrator handles docker compose down -v / up.
+
+# --- YCSB Load Phase ---
+LOAD_OUTPUT_FILE="${OUTPUT_DIR}/load_rep${REP_NUM}_${GENERATED_TIMESTAMP}.txt"
+echo "INFO [${DB_NAME}]: Esecuzione LOAD. Output: ${LOAD_OUTPUT_FILE}"
+"${YCSB_PATH}" load redis -s \
+    -P "${WORKLOAD_PATH_PREFIX}${WORKLOAD_NAME}" \
+    -p redis.hosts="${REDIS_NODES}" \
+    -p redis.cluster=true \
+    -p recordcount="${RECORD_COUNT}" \
+    -p operationcount="${OPERATION_COUNT}" \
+    -p fieldcount="${FIELD_COUNT}" \
+    -p fieldlength="${FIELD_LENGTH}" \
+    -p readallfields="${READ_ALL_FIELDS_BOOL}" \
+    > "${LOAD_OUTPUT_FILE}" 2>&1
+
+if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
+    echo "ERROR [${DB_NAME}]: LOAD fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}. Vedi ${LOAD_OUTPUT_FILE}"
+    tail -n 20 "${LOAD_OUTPUT_FILE}"
+fi
+echo "INFO [${DB_NAME}]: LOAD completato."
+
+# --- YCSB Run Phase ---
+RUN_OUTPUT_FILE="${OUTPUT_DIR}/run_rep${REP_NUM}_${GENERATED_TIMESTAMP}.txt"
+echo "INFO [${DB_NAME}]: Esecuzione RUN. Output: ${RUN_OUTPUT_FILE}"
+"${YCSB_PATH}" run redis -s \
+    -P "${WORKLOAD_PATH_PREFIX}${WORKLOAD_NAME}" \
+    -p redis.hosts="${REDIS_NODES}" \
+    -p redis.cluster=true \
+    -p recordcount="${RECORD_COUNT}" \
+    -p operationcount="${OPERATION_COUNT}" \
+    -p fieldcount="${FIELD_COUNT}" \
+    -p fieldlength="${FIELD_LENGTH}" \
+    -p readallfields="${READ_ALL_FIELDS_BOOL}" \
+    > "${RUN_OUTPUT_FILE}" 2>&1
+
+if ! grep -q "\[OVERALL\], RunTime(ms)" "${RUN_OUTPUT_FILE}"; then
+    echo "ERROR [${DB_NAME}]: RUN fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}. Vedi ${RUN_OUTPUT_FILE}"
+    tail -n 20 "${RUN_OUTPUT_FILE}"
+fi
+echo "INFO [${DB_NAME}]: RUN completato."
+
+echo "INFO [${DB_NAME}]: Test run ${WORKLOAD_NAME}, Rep ${REP_NUM} completato."

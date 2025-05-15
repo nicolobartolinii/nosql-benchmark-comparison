@@ -84,7 +84,31 @@ nosql-benchmark-comparison/
 
 ## Esecuzione dei Benchmark
 
-Sono forniti script orchestratori per ogni database. Questi script gestiscono l'avvio del cluster del database, l'esecuzione dei test YCSB (tutti i workload standard YCSB A-F, con 3 ripetizioni e 10.000 record/operazioni ciascuno) e la pulizia finale.
+Sono forniti script orchestratori per ogni database. Questi script gestiscono l'avvio del cluster del database, l'esecuzione dei test YCSB e la pulizia finale.
+
+I test sono strutturati per eseguire 5 scenari differenti per ciascuno dei 6 workload standard YCSB (A-F). Ogni scenario viene ripetuto 3 volte.
+
+**Scenari di Test (per ogni workload e ripetizione):**
+1.  **Scenario 1 (Baseline):**
+    *   `recordcount=10000`, `operationcount=10000`
+    *   `fieldcount=10`, `fieldlength=100`, `readallfields=true` (Default YCSB)
+2.  **Scenario 2 (Dataset Medio Modificato):**
+    *   `recordcount=50000`, `operationcount=25000`
+    *   `fieldcount=10`, `fieldlength=100`, `readallfields=true`
+3.  **Scenario 3 (Dataset Grande Modificato):**
+    *   `recordcount=200000`, `operationcount=50000`
+    *   `fieldcount=10`, `fieldlength=100`, `readallfields=true`
+4.  **Scenario 4 (Campo Singolo Grande):**
+    *   `recordcount=10000`, `operationcount=10000`
+    *   `fieldcount=1`, `fieldlength=1000`, `readallfields=true`
+5.  **Scenario 5 (Lettura Selettiva Campi):**
+    *   `recordcount=10000`, `operationcount=10000`
+    *   `fieldcount=10`, `fieldlength=100`, `readallfields=false`
+
+Batch size specifici per database:
+*   MongoDB: 500
+*   Cassandra: 100 (per `load`)
+*   Redis: Non applicabile
 
 **Importante:** Eseguire un solo script di benchmark alla volta, poiché avviano e fermano i rispettivi cluster di database.
 
@@ -97,11 +121,14 @@ Sono forniti script orchestratori per ogni database. Questi script gestiscono l'
 # Rendi lo script eseguibile (solo la prima volta)
 chmod +x run_mongo_benchmarks.sh
 
-# Avvia i benchmark per MongoDB (tutti i workload A-F, 3 ripetizioni)
+# Avvia i benchmark per MongoDB (tutti e 5 gli scenari, tutti i workload A-F, 3 ripetizioni)
 ./run_mongo_benchmarks.sh
 
-# Per eseguire solo workload specifici (es. workloada e workloadc):
-# ./run_mongo_benchmarks.sh workloada workloadc
+# Per eseguire solo scenari specifici (es. scenario 1, 4 e 5):
+# ./run_mongo_benchmarks.sh 1 4 5
+
+# NOTA: Attualmente non è possibile selezionare workload specifici tramite argomenti
+# quando si specificano gli scenari. Tutti i workload A-F verranno eseguiti per gli scenari scelti.
 ```
 
 ### 2. Esecuzione Benchmark per Cassandra
@@ -113,11 +140,11 @@ chmod +x run_mongo_benchmarks.sh
 # Rendi lo script eseguibile (solo la prima volta)
 chmod +x run_cassandra_benchmarks.sh
 
-# Avvia i benchmark per Cassandra (tutti i workload A-F, 3 ripetizioni)
+# Avvia i benchmark per Cassandra (tutti e 5 gli scenari, tutti i workload A-F, 3 ripetizioni)
 ./run_cassandra_benchmarks.sh
 
-# Per eseguire solo workload specifici (es. workloada e workloadc):
-# ./run_cassandra_benchmarks.sh workloada workloadc
+# Per eseguire solo scenari specifici (es. scenario 2 e 3):
+# ./run_cassandra_benchmarks.sh 2 3
 ```
 
 ### 3. Esecuzione Benchmark per Redis (Cluster Mode)
@@ -129,11 +156,11 @@ chmod +x run_cassandra_benchmarks.sh
 # Rendi lo script eseguibile (solo la prima volta)
 chmod +x run_redis_benchmarks.sh
 
-# Avvia i benchmark per Redis Cluster (tutti i workload A-F, 3 ripetizioni)
+# Avvia i benchmark per Redis Cluster (tutti e 5 gli scenari, tutti i workload A-F, 3 ripetizioni)
 ./run_redis_benchmarks.sh
 
-# Per eseguire solo workload specifici (es. workloada e workloadc):
-# ./run_redis_benchmarks.sh workloada workloadc
+# Per eseguire solo scenari specifici (es. scenario 1 e 5):
+# ./run_redis_benchmarks.sh 1 5
 ```
 
 ## Flusso di Esecuzione (Per Ogni Database)
@@ -141,23 +168,36 @@ chmod +x run_redis_benchmarks.sh
 Gli script orchestratori (`run_*.sh` nella root) eseguono i seguenti passi:
 1.  **Pulizia Preliminare:** Ferma e rimuove eventuali container/volumi del database da esecuzioni precedenti (`docker compose down -v`).
 2.  **Avvio Cluster:** Avvia il cluster del database usando il rispettivo file `[database]/docker-compose.yml`.
-3.  **Attesa/Inizializzazione:** Attende che il cluster sia stabile e pronto (con controlli specifici per MongoDB, Cassandra e Redis). Per MongoDB, esegue anche l'inizializzazione dei replica set per i due shard e l'aggiunta degli shard al router.
-4.  **Esecuzione YCSB:** Lancia un container Docker dall'immagine `nosql-benchmark/ycsb`, passando le variabili d'ambiente e montando la directory `results`. Questo container esegue lo script `ycsb/run-[database].sh` appropriato.
-5.  **Script Interno YCSB (`ycsb/run-*.sh`):**
-    *   Cicla attraverso i workload YCSB richiesti (A-F di default).
-    *   Per ogni workload, cicla per il numero di ripetizioni (3 di default).
-    *   **Prima di ogni fase `load`:** Pulisce lo stato precedente (es. `db.dropDatabase()` per Mongo, `DROP/CREATE KEYSPACE/TABLE` per Cassandra; Redis viene pulito dal riavvio del cluster).
-    *   Esegue la fase `load` di YCSB con i parametri configurati (10k record, batch size, ecc.).
-    *   Esegue la fase `run` (transazioni) di YCSB (10k operazioni).
-    *   Salva l'output di `load` e `run` in file separati nella directory `/results` (montata dall'host).
+3.  **Attesa/Inizializzazione:** Attende che il cluster sia stabile e pronto. Per MongoDB, inizializza i replica set per i due shard e li aggiunge al router.
+4.  **Esecuzione YCSB:** Lancia un container Docker dall'immagine `nosql-benchmark/ycsb`.
+    *   Questo container esegue lo script `ycsb/run-[database].sh` appropriato, passandogli i parametri per lo scenario corrente (workload, ripetizione, recordcount, operationcount, fieldcount, fieldlength, readallfields) e il nome della sottodirectory utente per i risultati (es. "nicolò").
+5.  **Script Interno YCSB (`ycsb/run-*.sh`):
+    *   **Prima di ogni fase `load`:** Pulisce lo stato precedente del database (es. `db.dropDatabase()` per Mongo).
+    *   Esegue la fase `load` di YCSB con i parametri dello scenario corrente.
+    *   Esegue la fase `run` (transazioni) di YCSB con i parametri dello scenario corrente.
+    *   Salva l'output di `load` e `run` in file separati nella directory `/results` (montata dall'host), seguendo la struttura definita.
 6.  **Pulizia Finale:** Ferma e rimuove i container e i volumi del database (`docker compose down -v`).
 
 ## Risultati
 
-I file di output grezzi di YCSB (formato testo) vengono salvati nella directory `results/` sull'host.
-I nomi dei file seguiranno un pattern simile a: `[database]_[workload]_[fase]_[ripetizione]_[timestamp].txt`.
+I file di output grezzi di YCSB (formato testo) vengono salvati nella directory `results/[nome_utente_specificato_nello_script_orchestratore]/` sull'host.
+Ad esempio, per l'utente "nicolò", la struttura sarà:
+`results/nicolò/[database]/[workload]/rc[X]_oc[Y]_fc[F]_fl[L]_raf[R]/[phase]_rep[N]_[YYYY-MM-DD_HH-MM-SS].txt`
 
-Esempio: `cassandra_workloada_run_rep1_20250508141636.txt`
+Dove:
+*   `[database]`: `mongodb`, `cassandra`, `redis`
+*   `[workload]`: `workloada`, `workloadb`, ecc.
+*   `rc[X]`: Conteggio record (es. `rc10000`)
+*   `oc[Y]`: Conteggio operazioni (es. `oc10000`)
+*   `fc[F]`: Conteggio campi (es. `fc10`)
+*   `fl[L]`: Lunghezza campo (es. `fl100`)
+*   `raf[R]`: Lettura di tutti i campi (es. `raftrue` o `raffalse`)
+*   `[phase]`: `load` o `run`
+*   `rep[N]`: Numero di ripetizione (es. `rep1`)
+*   `[YYYY-MM-DD_HH-MM-SS]`: Timestamp della generazione del file (UTC+2)
+
+Esempio:
+`results/nicolò/mongodb/workloada/rc10000_oc10000_fc1_fl100_raftrue/load_rep1_2023-10-27_16-30-00.txt`
 
 L'analisi e la visualizzazione di questi risultati (grafici, tabelle comparative) sono fasi successive del progetto.
 
