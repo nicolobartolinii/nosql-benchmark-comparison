@@ -81,7 +81,7 @@ function run_ycsb_tests() {
 
     docker run --rm --name ycsb_mongo_runner \
         --network "${DOCKER_NETWORK}" \
-        -v "$(pwd)/results:/results" \
+        -v "$(pwd)/results/andrea:/results" \
         --env-file .env \
         "${YCSB_IMAGE_NAME}" "${YCSB_MONGO_SCRIPT_PATH_IN_CONTAINER}" ${YCSB_SCRIPT_ARGS}
     
