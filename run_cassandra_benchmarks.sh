@@ -6,7 +6,15 @@ CASSANDRA_SETUP_DIR="cassandra"
 YCSB_IMAGE_NAME="nosql-benchmark/ycsb"
 YCSB_CASSANDRA_SCRIPT_PATH_IN_CONTAINER="./run-cassandra.sh"
 DOCKER_NETWORK="shared-net"
+<<<<<<< Updated upstream
 YCSB_SCRIPT_ARGS="$@"
+=======
+DB_USER_SUBDIR="andrea" # Your user-specific results subdirectory
+
+# Default YCSB workloads
+DEFAULT_WORKLOADS=("workloada" "workloadb" "workloadc" "workloadd" "workloade" "workloadf")
+REPETITIONS=3
+>>>>>>> Stashed changes
 # --- Fine Configurazione ---
 
 function start_cassandra_cluster() {

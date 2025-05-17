@@ -1,0 +1,65 @@
+[WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
+[DEBUG]  Running 'mvn -pl site.ycsb:mongodb-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
+/opt/java/openjdk/bin/java -cp /opt/YCSB_PROJECT_ROOT/mongodb/conf:/opt/YCSB_PROJECT_ROOT/mongodb/target/mongodb-binding-0.17.0.jar:/root/.m2/repository/org/mongodb/mongo-java-driver/3.8.0/mongo-java-driver-3.8.0.jar:/root/.m2/repository/org/apache/htrace/htrace-core4/4.1.0-incubating/htrace-core4-4.1.0-incubating.jar:/opt/YCSB_PROJECT_ROOT/core/target/core-0.17.0.jar:/root/.m2/repository/org/xerial/snappy/snappy-java/1.1.7.1/snappy-java-1.1.7.1.jar:/root/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/root/.m2/repository/com/allanbank/mongodb-async-driver/2.0.1/mongodb-async-driver-2.0.1.jar site.ycsb.Client -db site.ycsb.db.MongoDbClient -s -P workloads/workloadf -p recordcount=200000 -p operationcount=50000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p mongodb.url=mongodb://mongo-mongos:27017/ycsb?w=1 -t
+Command line: -db site.ycsb.db.MongoDbClient -s -P workloads/workloadf -p recordcount=200000 -p operationcount=50000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p mongodb.url=mongodb://mongo-mongos:27017/ycsb?w=1 -t
+YCSB Client 0.17.0
+
+Loading workload...
+Starting test.
+2025-05-17 13:58:42:787 0 sec: 0 operations; est completion in 0 second 
+May 17, 2025 1:58:42 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster created with settings {hosts=[mongo-mongos:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+mongo client connection created with mongodb://mongo-mongos:27017/ycsb?w=1
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+May 17, 2025 1:58:42 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster description not yet available. Waiting for 30000 ms before timing out
+May 17, 2025 1:58:42 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:1}] to mongo-mongos:27017
+May 17, 2025 1:58:42 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Monitor thread successfully connected to server with description ServerDescription{address=mongo-mongos:27017, type=SHARD_ROUTER, state=CONNECTED, ok=true, version=ServerVersion{versionList=[7, 0, 20]}, minWireVersion=0, maxWireVersion=21, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=2056750}
+May 17, 2025 1:58:43 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:2}] to mongo-mongos:27017
+2025-05-17 13:58:52:765 10 sec: 8653 operations; 865.21 current ops/sec; est completion in 48 seconds [READ: Count=8655, Max=54111, Min=270, Avg=737.66, 90=1042, 99=1689, 99.9=4403, 99.99=37535] [READ-MODIFY-WRITE: Count=4329, Max=38847, Min=758, Avg=1502.71, 90=1985, 99=3053, 99.9=9479, 99.99=38847] [UPDATE: Count=4331, Max=8031, Min=399, Avg=755.48, 90=978, 99=1448, 99.9=2855, 99.99=8031] 
+2025-05-17 13:59:02:765 20 sec: 21534 operations; 1288.1 current ops/sec; est completion in 27 seconds [READ: Count=12880, Max=4411, Min=244, Avg=497.79, 90=628, 99=1086, 99.9=2377, 99.99=3869] [READ-MODIFY-WRITE: Count=6343, Max=9159, Min=618, Avg=1052.07, 90=1290, 99=2095, 99.9=4115, 99.99=6923] [UPDATE: Count=6342, Max=4471, Min=329, Avg=551.68, 90=669, 99=1053, 99.9=2379, 99.99=4191] 
+2025-05-17 13:59:12:767 30 sec: 32039 operations; 1050.5 current ops/sec; est completion in 17 seconds [READ: Count=10505, Max=293631, Min=243, Avg=619.45, 90=847, 99=2119, 99.9=6111, 99.99=25503] [READ-MODIFY-WRITE: Count=5224, Max=296191, Min=626, Avg=1307.74, 90=1756, 99=4275, 99.9=11239, 99.99=35583] [UPDATE: Count=5223, Max=33759, Min=335, Avg=652.77, 90=905, 99=2063, 99.9=4383, 99.99=6247] 
+2025-05-17 13:59:22:769 40 sec: 41222 operations; 918.21 current ops/sec; est completion in 9 second [READ: Count=9185, Max=9887, Min=252, Avg=692, 90=964, 99=1711, 99.9=4255, 99.99=8111] [READ-MODIFY-WRITE: Count=4598, Max=18367, Min=669, Avg=1472.07, 90=2008, 99=3355, 99.9=6791, 99.99=18367] [UPDATE: Count=4599, Max=7059, Min=365, Avg=773.91, 90=1081, 99=1768, 99.9=3955, 99.99=7059] 
+May 17, 2025 1:59:31 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Closed connection [connectionId{localValue:2}] to mongo-mongos:27017 because the pool has been closed.
+2025-05-17 13:59:31:267 48 sec: 50000 operations; 1032.71 current ops/sec; [READ: Count=8775, Max=6879, Min=255, Avg=615.55, 90=823, 99=1494, 99.9=2959, 99.99=5979] [READ-MODIFY-WRITE: Count=4422, Max=14151, Min=677, Avg=1302.57, 90=1714, 99=3053, 99.9=6971, 99.99=14151] [CLEANUP: Count=1, Max=11791, Min=11784, Avg=11788, 90=11791, 99=11791, 99.9=11791, 99.99=11791] [UPDATE: Count=4421, Max=6319, Min=348, Avg=679.79, 90=897, 99=1647, 99.9=3447, 99.99=6319] 
+[OVERALL], RunTime(ms), 48503
+[OVERALL], Throughput(ops/sec), 1030.864070263695
+[TOTAL_GCS_G1_Young_Generation], Count, 18
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 48
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.09896295074531473
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 18
+[TOTAL_GC_TIME], Time(ms), 48
+[TOTAL_GC_TIME_%], Time(%), 0.09896295074531473
+[READ], Operations, 50000
+[READ], AverageLatency(us), 621.21804
+[READ], MinLatency(us), 243
+[READ], MaxLatency(us), 293631
+[READ], 95thPercentileLatency(us), 1060
+[READ], 99thPercentileLatency(us), 1619
+[READ], Return=OK, 50000
+[READ-MODIFY-WRITE], Operations, 24916
+[READ-MODIFY-WRITE], AverageLatency(us), 1305.9364263926793
+[READ-MODIFY-WRITE], MinLatency(us), 618
+[READ-MODIFY-WRITE], MaxLatency(us), 296191
+[READ-MODIFY-WRITE], 95thPercentileLatency(us), 2121
+[READ-MODIFY-WRITE], 99thPercentileLatency(us), 3217
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 11788.0
+[CLEANUP], MinLatency(us), 11784
+[CLEANUP], MaxLatency(us), 11791
+[CLEANUP], 95thPercentileLatency(us), 11791
+[CLEANUP], 99thPercentileLatency(us), 11791
+[UPDATE], Operations, 24916
+[UPDATE], AverageLatency(us), 672.0455530582758
+[UPDATE], MinLatency(us), 329
+[UPDATE], MaxLatency(us), 33759
+[UPDATE], 95thPercentileLatency(us), 1088
+[UPDATE], 99thPercentileLatency(us), 1652
+[UPDATE], Return=OK, 24916

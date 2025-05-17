@@ -6,6 +6,14 @@ MONGO_SETUP_DIR="mongo"
 YCSB_IMAGE_NAME="nosql-benchmark/ycsb"
 YCSB_MONGO_SCRIPT_PATH_IN_CONTAINER="./run-mongo.sh"
 DOCKER_NETWORK="shared-net"
+<<<<<<< Updated upstream
+=======
+DB_USER_SUBDIR="andrea" # Your user-specific results subdirectory
+
+# Default YCSB workloads
+DEFAULT_WORKLOADS=("workloada" "workloadb" "workloadc" "workloadd" "workloade" "workloadf")
+REPETITIONS=3
+>>>>>>> Stashed changes
 
 YCSB_SCRIPT_ARGS="$@"
 # --- Fine Configurazione ---
