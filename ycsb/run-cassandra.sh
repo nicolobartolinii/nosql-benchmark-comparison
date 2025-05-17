@@ -155,7 +155,6 @@ echo "INFO [${DB_NAME}]: Esecuzione RUN. Output: ${RUN_OUTPUT_FILE}"
 
 if ! grep -q "\[OVERALL\], RunTime(ms)" "${RUN_OUTPUT_FILE}"; then
     echo "ERROR [${DB_NAME}]: RUN fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}. Vedi ${RUN_OUTPUT_FILE}"
-    tail -n 30 "${RUN_OUTPUT_FILE}" # Show more lines for Cassandra errors
 fi
 echo "INFO [${DB_NAME}]: RUN completato."
 

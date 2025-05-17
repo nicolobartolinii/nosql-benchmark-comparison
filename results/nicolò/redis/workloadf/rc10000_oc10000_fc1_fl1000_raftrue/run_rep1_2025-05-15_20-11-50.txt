@@ -1,0 +1,56 @@
+[WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
+[DEBUG]  Running 'mvn -pl site.ycsb:redis-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
+/opt/java/openjdk/bin/java -cp /opt/YCSB_PROJECT_ROOT/redis/conf:/opt/YCSB_PROJECT_ROOT/redis/target/redis-binding-0.17.0.jar:/root/.m2/repository/org/apache/htrace/htrace-core4/4.1.0-incubating/htrace-core4-4.1.0-incubating.jar:/opt/YCSB_PROJECT_ROOT/core/target/core-0.17.0.jar:/root/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/root/.m2/repository/redis/clients/jedis/2.9.0/jedis-2.9.0.jar:/root/.m2/repository/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar:/root/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar site.ycsb.Client -db site.ycsb.db.RedisClient -s -P workloads/workloadf -p redis.hosts=redis-node1:6379,redis-node2:6379,redis-node3:6379 -p redis.cluster=true -p recordcount=10000 -p operationcount=10000 -p fieldcount=1 -p fieldlength=1000 -p readallfields=true -t
+Command line: -db site.ycsb.db.RedisClient -s -P workloads/workloadf -p redis.hosts=redis-node1:6379,redis-node2:6379,redis-node3:6379 -p redis.cluster=true -p recordcount=10000 -p operationcount=10000 -p fieldcount=1 -p fieldlength=1000 -p readallfields=true -t
+YCSB Client 0.17.0
+
+Loading workload...
+Starting test.
+INFO: Modalità Cluster Redis abilitata.
+INFO: Parsing host Redis: redis-node1:6379,redis-node2:6379,redis-node3:6379
+DEBUG: Aggiungo nodo al cluster: redis-node1:6379
+DEBUG: Aggiungo nodo al cluster: redis-node2:6379
+DEBUG: Aggiungo nodo al cluster: redis-node3:6379
+INFO: Creo JedisCluster con nodi: [redis-node1:6379, redis-node2:6379, redis-node3:6379], timeout=2000, maxAttempts=5
+2025-05-15 18:11:59:099 0 sec: 0 operations; est completion in 0 second 
+INFO: RedisClient inizializzato correttamente.
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+INFO: Connessione Redis chiusa.
+2025-05-15 18:12:00:125 1 sec: 10000 operations; 9596.93 current ops/sec; [READ: Count=10000, Max=3159, Min=26, Avg=64.16, 90=80, 99=148, 99.9=379, 99.99=2409] [READ-MODIFY-WRITE: Count=5039, Max=8479, Min=56, Avg=124.89, 90=150, 99=277, 99.9=522, 99.99=877] [CLEANUP: Count=1, Max=1082, Min=1082, Avg=1082, 90=1082, 99=1082, 99.9=1082, 99.99=1082] [UPDATE: Count=5039, Max=516, Min=27, Avg=58.12, 90=70, 99=115, 99.9=191, 99.99=229] 
+[OVERALL], RunTime(ms), 1042
+[OVERALL], Throughput(ops/sec), 9596.928982725527
+[TOTAL_GCS_G1_Young_Generation], Count, 2
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 3
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.28790786948176583
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 2
+[TOTAL_GC_TIME], Time(ms), 3
+[TOTAL_GC_TIME_%], Time(%), 0.28790786948176583
+[READ], Operations, 10000
+[READ], AverageLatency(us), 64.1553
+[READ], MinLatency(us), 26
+[READ], MaxLatency(us), 3159
+[READ], 95thPercentileLatency(us), 95
+[READ], 99thPercentileLatency(us), 148
+[READ], Return=OK, 10000
+[READ-MODIFY-WRITE], Operations, 5039
+[READ-MODIFY-WRITE], AverageLatency(us), 124.891645167692
+[READ-MODIFY-WRITE], MinLatency(us), 56
+[READ-MODIFY-WRITE], MaxLatency(us), 8479
+[READ-MODIFY-WRITE], 95thPercentileLatency(us), 174
+[READ-MODIFY-WRITE], 99thPercentileLatency(us), 277
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 1082.0
+[CLEANUP], MinLatency(us), 1082
+[CLEANUP], MaxLatency(us), 1082
+[CLEANUP], 95thPercentileLatency(us), 1082
+[CLEANUP], 99thPercentileLatency(us), 1082
+[UPDATE], Operations, 5039
+[UPDATE], AverageLatency(us), 58.12323873784481
+[UPDATE], MinLatency(us), 27
+[UPDATE], MaxLatency(us), 516
+[UPDATE], 95thPercentileLatency(us), 80
+[UPDATE], 99thPercentileLatency(us), 115
+[UPDATE], Return=OK, 5039
