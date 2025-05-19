@@ -7,8 +7,11 @@ YCSB_IMAGE_NAME="nosql-benchmark/ycsb"
 YCSB_REDIS_SCRIPT_PATH_IN_CONTAINER="./run-redis.sh"
 DOCKER_NETWORK="shared-net"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 YCSB_SCRIPT_ARGS="$@"
 =======
+=======
+>>>>>>> Stashed changes
 DB_USER_SUBDIR="andrea" # Your user-specific results subdirectory
 
 # Default YCSB workloads

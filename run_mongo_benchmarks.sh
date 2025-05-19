@@ -7,7 +7,10 @@ YCSB_IMAGE_NAME="nosql-benchmark/ycsb"
 YCSB_MONGO_SCRIPT_PATH_IN_CONTAINER="./run-mongo.sh"
 DOCKER_NETWORK="shared-net"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 DB_USER_SUBDIR="andrea" # Your user-specific results subdirectory
 
 # Default YCSB workloads
