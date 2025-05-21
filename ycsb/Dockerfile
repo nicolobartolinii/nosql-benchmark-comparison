@@ -1,7 +1,7 @@
 # ycsb/Dockerfile
 FROM eclipse-temurin:17-jdk-jammy
 ARG YCSB_TAG=0.17.0
-ARG CASSANDRA_VERSION=4.1.8
+ARG CASSANDRA_VERSION=4.1.9
 
 WORKDIR /opt
 
