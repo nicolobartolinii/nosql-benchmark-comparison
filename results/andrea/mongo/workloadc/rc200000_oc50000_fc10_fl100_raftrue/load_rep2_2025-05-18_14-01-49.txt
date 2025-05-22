@@ -1,0 +1,56 @@
+[WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
+[DEBUG]  Running 'mvn -pl site.ycsb:mongodb-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
+/opt/java/openjdk/bin/java -cp /opt/YCSB_PROJECT_ROOT/mongodb/conf:/opt/YCSB_PROJECT_ROOT/mongodb/target/mongodb-binding-0.17.0.jar:/root/.m2/repository/org/mongodb/mongo-java-driver/3.8.0/mongo-java-driver-3.8.0.jar:/root/.m2/repository/org/apache/htrace/htrace-core4/4.1.0-incubating/htrace-core4-4.1.0-incubating.jar:/opt/YCSB_PROJECT_ROOT/core/target/core-0.17.0.jar:/root/.m2/repository/org/xerial/snappy/snappy-java/1.1.7.1/snappy-java-1.1.7.1.jar:/root/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/root/.m2/repository/com/allanbank/mongodb-async-driver/2.0.1/mongodb-async-driver-2.0.1.jar site.ycsb.Client -db site.ycsb.db.MongoDbClient -s -P workloads/workloadc -p recordcount=200000 -p operationcount=50000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p mongodb.url=mongodb://mongo-mongos:27017/ycsb?w=1 -p mongodb.batchsize=500 -load
+Command line: -db site.ycsb.db.MongoDbClient -s -P workloads/workloadc -p recordcount=200000 -p operationcount=50000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p mongodb.url=mongodb://mongo-mongos:27017/ycsb?w=1 -p mongodb.batchsize=500 -load
+YCSB Client 0.17.0
+
+Loading workload...
+Starting test.
+2025-05-18 12:01:58:469 0 sec: 0 operations; est completion in 0 second 
+May 18, 2025 12:01:58 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster created with settings {hosts=[mongo-mongos:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+mongo client connection created with mongodb://mongo-mongos:27017/ycsb?w=1
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+May 18, 2025 12:01:58 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster description not yet available. Waiting for 30000 ms before timing out
+May 18, 2025 12:01:58 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:1}] to mongo-mongos:27017
+May 18, 2025 12:01:58 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Monitor thread successfully connected to server with description ServerDescription{address=mongo-mongos:27017, type=SHARD_ROUTER, state=CONNECTED, ok=true, version=ServerVersion{versionList=[7, 0, 20]}, minWireVersion=0, maxWireVersion=21, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1401959}
+May 18, 2025 12:01:58 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:2}] to mongo-mongos:27017
+2025-05-18 12:02:08:454 10 sec: 21321 operations; 2131.89 current ops/sec; est completion in 1 minute [INSERT: Count=21328, Max=58719, Min=212, Avg=455.46, 90=567, 99=963, 99.9=2141, 99.99=12071] 
+2025-05-18 12:02:18:460 20 sec: 44967 operations; 2364.6 current ops/sec; est completion in 1 minute [INSERT: Count=23652, Max=20799, Min=210, Avg=418.8, 90=494, 99=739, 99.9=1515, 99.99=4013] 
+2025-05-18 12:02:28:454 29 sec: 68313 operations; 2335.07 current ops/sec; est completion in 58 seconds [INSERT: Count=23338, Max=7627, Min=230, Avg=424.39, 90=511, 99=904, 99.9=1775, 99.99=4495] 
+2025-05-18 12:02:38:454 39 sec: 91088 operations; 2277.5 current ops/sec; est completion in 48 seconds [INSERT: Count=22775, Max=6783, Min=222, Avg=436.23, 90=527, 99=877, 99.9=2271, 99.99=3949] 
+2025-05-18 12:02:48:451 49 sec: 115167 operations; 2407.9 current ops/sec; est completion in 37 seconds [INSERT: Count=24075, Max=5423, Min=210, Avg=413, 90=488, 99=744, 99.9=1626, 99.99=4343] 
+2025-05-18 12:02:58:454 60 sec: 138641 operations; 2347.17 current ops/sec; est completion in 27 seconds [INSERT: Count=23478, Max=8059, Min=230, Avg=423.95, 90=514, 99=777, 99.9=1599, 99.99=6747] 
+2025-05-18 12:03:08:452 70 sec: 163238 operations; 2459.7 current ops/sec; est completion in 16 seconds [INSERT: Count=24593, Max=4867, Min=230, Avg=404.62, 90=471, 99=716, 99.9=1654, 99.99=3239] 
+2025-05-18 12:03:18:454 80 sec: 187273 operations; 2403.5 current ops/sec; est completion in 6 second [INSERT: Count=24038, Max=6279, Min=196, Avg=414.27, 90=492, 99=719, 99.9=1349, 99.99=4603] 
+May 18, 2025 12:03:23 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Closed connection [connectionId{localValue:2}] to mongo-mongos:27017 because the pool has been closed.
+2025-05-18 12:03:23:681 85 sec: 200000 operations; 2433.93 current ops/sec; [CLEANUP: Count=1, Max=10687, Min=10680, Avg=10684, 90=10687, 99=10687, 99.9=10687, 99.99=10687] [INSERT: Count=12723, Max=8871, Min=235, Avg=408.01, 90=471, 99=695, 99.9=1921, 99.99=3139] 
+[OVERALL], RunTime(ms), 85229
+[OVERALL], Throughput(ops/sec), 2346.6191085194005
+[TOTAL_GCS_G1_Young_Generation], Count, 31
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 51
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.05983878726724472
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 31
+[TOTAL_GC_TIME], Time(ms), 51
+[TOTAL_GC_TIME_%], Time(%), 0.05983878726724472
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 10684.0
+[CLEANUP], MinLatency(us), 10680
+[CLEANUP], MaxLatency(us), 10687
+[CLEANUP], 95thPercentileLatency(us), 10687
+[CLEANUP], 99thPercentileLatency(us), 10687
+[INSERT], Operations, 200000
+[INSERT], AverageLatency(us), 422.27719
+[INSERT], MinLatency(us), 196
+[INSERT], MaxLatency(us), 58719
+[INSERT], 95thPercentileLatency(us), 569
+[INSERT], 99thPercentileLatency(us), 801
+[INSERT], Return=OK, 200000

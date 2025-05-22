@@ -6,8 +6,14 @@ YCSB Client 0.17.0
 
 Loading workload...
 Starting test.
+<<<<<<< HEAD:results/nicola/mongo/workloadc/rc10000_oc10000_fc10_fl100_raffalse/run_rep3_2025-05-21_19-11-14.txt
 2025-05-21 17:11:32:891 0 sec: 0 operations; est completion in 0 second 
 May 21, 2025 5:11:33 PM com.mongodb.diagnostics.logging.JULLogger log
+=======
+<<<<<<<< Updated upstream:results/nicolò/mongodb/mongo_workloadc_run_rep3_20250508094627.txt
+2025-05-08 09:46:30:244 0 sec: 0 operations; est completion in 0 second 
+May 08, 2025 9:46:30 AM com.mongodb.diagnostics.logging.JULLogger log
+>>>>>>> origin/andrea:results/nicolò/mongodb/mongo_workloadc_run_rep3_20250508094627.txt
 INFO: Cluster created with settings {hosts=[mongo-mongos:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
 mongo client connection created with mongodb://mongo-mongos:27017/ycsb?w=1
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
@@ -46,3 +52,45 @@ INFO: Closed connection [connectionId{localValue:2}] to mongo-mongos:27017 becau
 [CLEANUP], MaxLatency(us), 1669
 [CLEANUP], 95thPercentileLatency(us), 1669
 [CLEANUP], 99thPercentileLatency(us), 1669
+========
+2025-05-18 11:40:02:892 0 sec: 0 operations; est completion in 0 second 
+May 18, 2025 11:40:03 AM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster created with settings {hosts=[mongo-mongos:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+mongo client connection created with mongodb://mongo-mongos:27017/ycsb?w=1
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+May 18, 2025 11:40:03 AM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster description not yet available. Waiting for 30000 ms before timing out
+May 18, 2025 11:40:03 AM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:1}] to mongo-mongos:27017
+May 18, 2025 11:40:03 AM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Monitor thread successfully connected to server with description ServerDescription{address=mongo-mongos:27017, type=SHARD_ROUTER, state=CONNECTED, ok=true, version=ServerVersion{versionList=[7, 0, 20]}, minWireVersion=0, maxWireVersion=21, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1333625}
+May 18, 2025 11:40:03 AM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:2}] to mongo-mongos:27017
+May 18, 2025 11:40:10 AM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Closed connection [connectionId{localValue:2}] to mongo-mongos:27017 because the pool has been closed.
+2025-05-18 11:40:10:996 8 sec: 25000 operations; 3078.06 current ops/sec; [READ: Count=25000, Max=36511, Min=160, Avg=314.41, 90=372, 99=723, 99.9=1619, 99.99=9767] [CLEANUP: Count=1, Max=2419, Min=2418, Avg=2419, 90=2419, 99=2419, 99.9=2419, 99.99=2419] 
+[OVERALL], RunTime(ms), 8122
+[OVERALL], Throughput(ops/sec), 3078.059591233686
+[TOTAL_GCS_G1_Young_Generation], Count, 8
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 12
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.14774686037921694
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 8
+[TOTAL_GC_TIME], Time(ms), 12
+[TOTAL_GC_TIME_%], Time(%), 0.14774686037921694
+[READ], Operations, 25000
+[READ], AverageLatency(us), 314.41484
+[READ], MinLatency(us), 160
+[READ], MaxLatency(us), 36511
+[READ], 95thPercentileLatency(us), 453
+[READ], 99thPercentileLatency(us), 723
+[READ], Return=OK, 25000
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 2419.0
+[CLEANUP], MinLatency(us), 2418
+[CLEANUP], MaxLatency(us), 2419
+[CLEANUP], 95thPercentileLatency(us), 2419
+[CLEANUP], 99thPercentileLatency(us), 2419
+>>>>>>>> Stashed changes:results/andrea/mongo/workloadc/rc50000_oc25000_fc10_fl100_raftrue/run_rep3_2025-05-18_13-39-31.txt

@@ -6,8 +6,14 @@ YCSB Client 0.17.0
 
 Loading workload...
 Starting test.
+<<<<<<< HEAD:results/nicolò/mongo/workloadb/rc10000_oc10000_fc1_fl1000_raftrue/load_rep1_2025-05-15_19-04-42.txt
 2025-05-15 17:04:59:060 0 sec: 0 operations; est completion in 0 second 
 May 15, 2025 5:04:59 PM com.mongodb.diagnostics.logging.JULLogger log
+=======
+<<<<<<<< Updated upstream:results/nicolò/mongodb/mongo_workloadb_run_rep2_20250508094453.txt
+2025-05-08 09:44:55:928 0 sec: 0 operations; est completion in 0 second 
+May 08, 2025 9:44:56 AM com.mongodb.diagnostics.logging.JULLogger log
+>>>>>>> origin/andrea:results/nicolò/mongodb/mongo_workloadb_run_rep2_20250508094453.txt
 INFO: Cluster created with settings {hosts=[mongo-mongos:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
 mongo client connection created with mongodb://mongo-mongos:27017/ycsb?w=1
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
@@ -34,6 +40,7 @@ INFO: Closed connection [connectionId{localValue:2}] to mongo-mongos:27017 becau
 [TOTAL_GC_TIME], Time(ms), 9
 [TOTAL_GC_TIME_%], Time(%), 0.1927607624759049
 [CLEANUP], Operations, 1
+<<<<<<< HEAD:results/nicolò/mongo/workloadb/rc10000_oc10000_fc1_fl1000_raftrue/load_rep1_2025-05-15_19-04-42.txt
 [CLEANUP], AverageLatency(us), 4210.0
 [CLEANUP], MinLatency(us), 4208
 [CLEANUP], MaxLatency(us), 4211
@@ -46,3 +53,66 @@ INFO: Closed connection [connectionId{localValue:2}] to mongo-mongos:27017 becau
 [INSERT], 95thPercentileLatency(us), 740
 [INSERT], 99thPercentileLatency(us), 1022
 [INSERT], Return=OK, 10000
+=======
+[CLEANUP], AverageLatency(us), 1707.0
+[CLEANUP], MinLatency(us), 1707
+[CLEANUP], MaxLatency(us), 1707
+[CLEANUP], 95thPercentileLatency(us), 1707
+[CLEANUP], 99thPercentileLatency(us), 1707
+[UPDATE], Operations, 490
+[UPDATE], AverageLatency(us), 316.00204081632654
+[UPDATE], MinLatency(us), 183
+[UPDATE], MaxLatency(us), 3683
+[UPDATE], 95thPercentileLatency(us), 465
+[UPDATE], 99thPercentileLatency(us), 701
+[UPDATE], Return=OK, 490
+========
+2025-05-18 12:39:38:762 0 sec: 0 operations; est completion in 0 second 
+May 18, 2025 12:39:38 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster created with settings {hosts=[mongo-mongos:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+mongo client connection created with mongodb://mongo-mongos:27017/ycsb?w=1
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+May 18, 2025 12:39:38 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster description not yet available. Waiting for 30000 ms before timing out
+May 18, 2025 12:39:38 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:1}] to mongo-mongos:27017
+May 18, 2025 12:39:38 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Monitor thread successfully connected to server with description ServerDescription{address=mongo-mongos:27017, type=SHARD_ROUTER, state=CONNECTED, ok=true, version=ServerVersion{versionList=[7, 0, 20]}, minWireVersion=0, maxWireVersion=21, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1254667}
+May 18, 2025 12:39:38 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:2}] to mongo-mongos:27017
+May 18, 2025 12:39:43 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Closed connection [connectionId{localValue:2}] to mongo-mongos:27017 because the pool has been closed.
+2025-05-18 12:39:43:974 5 sec: 10000 operations; 1912.05 current ops/sec; [CLEANUP: Count=1, Max=2653, Min=2652, Avg=2653, 90=2653, 99=2653, 99.9=2653, 99.99=2653] [INSERT: Count=531, Max=5595, Min=316, Avg=534.62, 90=678, 99=1037, 99.9=1887, 99.99=5595] [SCAN: Count=9469, Max=37439, Min=188, Avg=498.52, 90=701, 99=1127, 99.9=2003, 99.99=7051] 
+[OVERALL], RunTime(ms), 5230
+[OVERALL], Throughput(ops/sec), 1912.0458891013384
+[TOTAL_GCS_G1_Young_Generation], Count, 8
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 11
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.21032504780114722
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 8
+[TOTAL_GC_TIME], Time(ms), 11
+[TOTAL_GC_TIME_%], Time(%), 0.21032504780114722
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 2653.0
+[CLEANUP], MinLatency(us), 2652
+[CLEANUP], MaxLatency(us), 2653
+[CLEANUP], 95thPercentileLatency(us), 2653
+[CLEANUP], 99thPercentileLatency(us), 2653
+[INSERT], Operations, 531
+[INSERT], AverageLatency(us), 534.6195856873823
+[INSERT], MinLatency(us), 316
+[INSERT], MaxLatency(us), 5595
+[INSERT], 95thPercentileLatency(us), 762
+[INSERT], 99thPercentileLatency(us), 1037
+[INSERT], Return=OK, 531
+[SCAN], Operations, 9469
+[SCAN], AverageLatency(us), 498.518322948569
+[SCAN], MinLatency(us), 188
+[SCAN], MaxLatency(us), 37439
+[SCAN], 95thPercentileLatency(us), 807
+[SCAN], 99thPercentileLatency(us), 1127
+[SCAN], Return=OK, 9469
+>>>>>>>> Stashed changes:results/andrea/mongo/workloade/rc10000_oc10000_fc10_fl100_raffalse/run_rep1_2025-05-18_14-39-21.txt
+>>>>>>> origin/andrea:results/nicolò/mongodb/mongo_workloadb_run_rep2_20250508094453.txt

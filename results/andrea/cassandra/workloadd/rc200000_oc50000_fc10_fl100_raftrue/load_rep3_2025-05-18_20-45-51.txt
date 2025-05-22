@@ -1,0 +1,116 @@
+[WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
+[DEBUG]  Running 'mvn -pl site.ycsb:cassandra-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
+/opt/java/openjdk/bin/java -cp /opt/YCSB_PROJECT_ROOT/cassandra/conf:/opt/YCSB_PROJECT_ROOT/cassandra/target/cassandra-binding-0.17.0.jar:/root/.m2/repository/org/apache/htrace/htrace-core4/4.1.0-incubating/htrace-core4-4.1.0-incubating.jar:/opt/YCSB_PROJECT_ROOT/core/target/core-0.17.0.jar:/root/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/root/.m2/repository/io/dropwizard/metrics/metrics-core/3.1.2/metrics-core-3.1.2.jar:/root/.m2/repository/com/datastax/cassandra/cassandra-driver-core/3.0.0/cassandra-driver-core-3.0.0.jar:/root/.m2/repository/io/netty/netty-handler/4.0.33.Final/netty-handler-4.0.33.Final.jar:/root/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/root/.m2/repository/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar:/root/.m2/repository/io/netty/netty-transport/4.0.33.Final/netty-transport-4.0.33.Final.jar:/root/.m2/repository/io/netty/netty-codec/4.0.33.Final/netty-codec-4.0.33.Final.jar:/root/.m2/repository/com/google/guava/guava/16.0.1/guava-16.0.1.jar:/root/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/root/.m2/repository/io/netty/netty-buffer/4.0.33.Final/netty-buffer-4.0.33.Final.jar:/root/.m2/repository/io/netty/netty-common/4.0.33.Final/netty-common-4.0.33.Final.jar site.ycsb.Client -db site.ycsb.db.CassandraCQLClient -s -P workloads/workloadd -p hosts=cassandra-1,cassandra-2,cassandra-3 -p recordcount=200000 -p operationcount=50000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p cassandra.batchsize=100 -p cassandra.keyspace=ycsb -p cassandra.table=usertable -p cassandra.readconsistencylevel=QUORUM -p cassandra.writeconsistencylevel=QUORUM -load
+Command line: -db site.ycsb.db.CassandraCQLClient -s -P workloads/workloadd -p hosts=cassandra-1,cassandra-2,cassandra-3 -p recordcount=200000 -p operationcount=50000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p cassandra.batchsize=100 -p cassandra.keyspace=ycsb -p cassandra.table=usertable -p cassandra.readconsistencylevel=QUORUM -p cassandra.writeconsistencylevel=QUORUM -load
+YCSB Client 0.17.0
+
+Loading workload...
+Starting test.
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+2025-05-18 18:46:51:600 0 sec: 0 operations; est completion in 0 second 
+May 18, 2025 6:46:51 PM io.netty.util.internal.PlatformDependent <clinit>
+INFO: Your platform does not provide complete low-level API for accessing direct buffers reliably. Unless explicitly requested, heap buffer will always be preferred to avoid potential system unstability.
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+2025-05-18 18:47:01:585 10 sec: 1438 operations; 143.77 current ops/sec; est completion in 23 minutes [INSERT: Count=1439, Max=40383, Min=1192, Avg=3199.59, 90=3157, 99=5691, 99.9=39935, 99.99=40383] 
+2025-05-18 18:47:11:586 20 sec: 4219 operations; 278.07 current ops/sec; est completion in 15 minutes [INSERT: Count=2780, Max=53727, Min=1131, Avg=3566.63, 90=3961, 99=11191, 99.9=46687, 99.99=53727] 
+2025-05-18 18:47:21:584 30 sec: 6989 operations; 277.03 current ops/sec; est completion in 13 minutes [INSERT: Count=2770, Max=129407, Min=1481, Avg=3601.35, 90=4155, 99=12503, 99.9=41087, 99.99=129407] 
+2025-05-18 18:47:31:585 40 sec: 9652 operations; 266.3 current ops/sec; est completion in 13 minutes [INSERT: Count=2663, Max=51743, Min=1610, Avg=3738.74, 90=4695, 99=14511, 99.9=44383, 99.99=51743] 
+2025-05-18 18:47:41:585 50 sec: 12283 operations; 263.1 current ops/sec; est completion in 12 minutes [INSERT: Count=2631, Max=45599, Min=1594, Avg=3789.31, 90=4931, 99=12159, 99.9=44287, 99.99=45599] 
+2025-05-18 18:47:51:585 60 sec: 14905 operations; 262.23 current ops/sec; est completion in 12 minutes [INSERT: Count=2622, Max=51263, Min=1773, Avg=3800.98, 90=4959, 99=12767, 99.9=44575, 99.99=51263] 
+2025-05-18 18:48:01:585 70 sec: 17491 operations; 258.57 current ops/sec; est completion in 12 minutes [INSERT: Count=2586, Max=50303, Min=1554, Avg=3853.13, 90=4963, 99=21663, 99.9=45695, 99.99=50303] 
+2025-05-18 18:48:11:583 80 sec: 20062 operations; 257.13 current ops/sec; est completion in 11 minutes [INSERT: Count=2571, Max=52831, Min=1606, Avg=3877.43, 90=5059, 99=17855, 99.9=43519, 99.99=52831] 
+2025-05-18 18:48:21:583 90 sec: 22676 operations; 261.4 current ops/sec; est completion in 11 minutes [INSERT: Count=2614, Max=46207, Min=1458, Avg=3810.85, 90=5067, 99=14391, 99.9=42911, 99.99=46207] 
+2025-05-18 18:48:31:584 100 sec: 25291 operations; 261.5 current ops/sec; est completion in 11 minutes [INSERT: Count=2616, Max=48831, Min=1484, Avg=3809.85, 90=4995, 99=13623, 99.9=44095, 99.99=48831] 
+2025-05-18 18:48:41:584 110 sec: 27769 operations; 247.78 current ops/sec; est completion in 11 minutes [INSERT: Count=2477, Max=53119, Min=1411, Avg=4024.17, 90=5535, 99=15967, 99.9=48831, 99.99=53119] 
+2025-05-18 18:48:51:585 120 sec: 30313 operations; 254.4 current ops/sec; est completion in 11 minutes [INSERT: Count=2544, Max=50463, Min=1514, Avg=3917.35, 90=5087, 99=14687, 99.9=45055, 99.99=50463] 
+2025-05-18 18:49:01:583 130 sec: 33052 operations; 273.95 current ops/sec; est completion in 10 minutes [INSERT: Count=2739, Max=45919, Min=1562, Avg=3631.39, 90=4747, 99=11727, 99.9=43103, 99.99=45919] 
+2025-05-18 18:49:11:584 140 sec: 35676 operations; 262.37 current ops/sec; est completion in 10 minutes [INSERT: Count=2625, Max=51455, Min=945, Avg=3795.64, 90=5011, 99=14063, 99.9=44607, 99.99=51455] 
+2025-05-18 18:49:21:583 150 sec: 38203 operations; 252.73 current ops/sec; est completion in 10 minutes [INSERT: Count=2526, Max=49439, Min=1110, Avg=3943.63, 90=5147, 99=14423, 99.9=43903, 99.99=49439] 
+2025-05-18 18:49:31:584 160 sec: 40842 operations; 263.87 current ops/sec; est completion in 10 minutes [INSERT: Count=2639, Max=44095, Min=1197, Avg=3776.63, 90=4959, 99=14055, 99.9=42751, 99.99=44095] 
+2025-05-18 18:49:41:584 170 sec: 43351 operations; 250.87 current ops/sec; est completion in 10 minutes [INSERT: Count=2510, Max=239999, Min=1404, Avg=3972.06, 90=5143, 99=13695, 99.9=43647, 99.99=239999] 
+2025-05-18 18:49:51:585 180 sec: 45893 operations; 254.2 current ops/sec; est completion in 10 minutes [INSERT: Count=2541, Max=45791, Min=1561, Avg=3920.11, 90=5163, 99=15439, 99.9=43135, 99.99=45791] 
+2025-05-18 18:50:01:584 190 sec: 48474 operations; 258.13 current ops/sec; est completion in 9 minutes [INSERT: Count=2581, Max=49439, Min=1478, Avg=3858.19, 90=4955, 99=13847, 99.9=46463, 99.99=49439] 
+2025-05-18 18:50:11:583 200 sec: 51079 operations; 260.53 current ops/sec; est completion in 9 minutes [INSERT: Count=2606, Max=51487, Min=1487, Avg=3825.76, 90=4975, 99=15527, 99.9=43455, 99.99=51487] 
+2025-05-18 18:50:21:584 210 sec: 53581 operations; 250.17 current ops/sec; est completion in 9 minutes [INSERT: Count=2501, Max=48543, Min=1563, Avg=3985.47, 90=5403, 99=18255, 99.9=46111, 99.99=48543] 
+2025-05-18 18:50:31:583 220 sec: 56129 operations; 254.83 current ops/sec; est completion in 9 minutes [INSERT: Count=2549, Max=49503, Min=1606, Avg=3906.47, 90=5059, 99=17999, 99.9=45279, 99.99=49503] 
+2025-05-18 18:50:41:584 230 sec: 58628 operations; 249.88 current ops/sec; est completion in 9 minutes [INSERT: Count=2498, Max=57791, Min=1552, Avg=3979.17, 90=5167, 99=38879, 99.9=47359, 99.99=57791] 
+2025-05-18 18:50:51:582 239 sec: 61227 operations; 259.95 current ops/sec; est completion in 9 minutes [INSERT: Count=2599, Max=45279, Min=1640, Avg=3835.18, 90=5051, 99=13583, 99.9=43967, 99.99=45279] 
+2025-05-18 18:51:01:587 250 sec: 63900 operations; 267.27 current ops/sec; est completion in 8 minutes [INSERT: Count=2674, Max=45759, Min=1316, Avg=3725.13, 90=4759, 99=12719, 99.9=43807, 99.99=45759] 
+2025-05-18 18:51:11:584 260 sec: 66724 operations; 282.37 current ops/sec; est completion in 8 minutes [INSERT: Count=2824, Max=43615, Min=1551, Avg=3528.58, 90=4479, 99=11335, 99.9=41887, 99.99=43615] 
+2025-05-18 18:51:21:583 270 sec: 69440 operations; 271.63 current ops/sec; est completion in 8 minutes [INSERT: Count=2715, Max=45631, Min=1042, Avg=3670.69, 90=4987, 99=10671, 99.9=41695, 99.99=45631] 
+2025-05-18 18:51:31:582 279 sec: 71989 operations; 254.93 current ops/sec; est completion in 8 minutes [INSERT: Count=2549, Max=50975, Min=697, Avg=3910.22, 90=4935, 99=39647, 99.9=47455, 99.99=50975] 
+2025-05-18 18:51:41:584 290 sec: 74561 operations; 257.17 current ops/sec; est completion in 8 minutes [INSERT: Count=2572, Max=48991, Min=1478, Avg=3874.32, 90=5111, 99=13863, 99.9=44095, 99.99=48991] 
+2025-05-18 18:51:51:583 300 sec: 77105 operations; 254.4 current ops/sec; est completion in 7 minutes [INSERT: Count=2544, Max=53599, Min=775, Avg=3920.2, 90=4975, 99=16799, 99.9=46751, 99.99=53599] 
+2025-05-18 18:52:01:583 309 sec: 79580 operations; 247.52 current ops/sec; est completion in 7 minutes [INSERT: Count=2476, Max=46143, Min=1283, Avg=4027.24, 90=5039, 99=39583, 99.9=45247, 99.99=46143] 
+2025-05-18 18:52:11:583 320 sec: 81996 operations; 241.58 current ops/sec; est completion in 7 minutes [INSERT: Count=2415, Max=263935, Min=1576, Avg=4128.54, 90=5091, 99=39999, 99.9=48255, 99.99=263935] 
+2025-05-18 18:52:21:582 330 sec: 84538 operations; 254.2 current ops/sec; est completion in 7 minutes [INSERT: Count=2542, Max=45343, Min=1529, Avg=3923.31, 90=5023, 99=24927, 99.9=44063, 99.99=45343] 
+2025-05-18 18:52:31:584 340 sec: 87193 operations; 265.5 current ops/sec; est completion in 7 minutes [INSERT: Count=2655, Max=51071, Min=1440, Avg=3756.75, 90=4499, 99=16463, 99.9=46815, 99.99=51071] 
+2025-05-18 18:52:41:582 349 sec: 89911 operations; 271.83 current ops/sec; est completion in 7 minutes [INSERT: Count=2718, Max=47007, Min=1450, Avg=3668.38, 90=4763, 99=12943, 99.9=43679, 99.99=47007] 
+2025-05-18 18:52:51:583 359 sec: 92536 operations; 262.5 current ops/sec; est completion in 6 minutes [INSERT: Count=2625, Max=51615, Min=1561, Avg=3799.53, 90=4663, 99=17231, 99.9=43903, 99.99=51615] 
+2025-05-18 18:53:01:582 369 sec: 95134 operations; 259.83 current ops/sec; est completion in 6 minutes [INSERT: Count=2599, Max=46047, Min=1676, Avg=3836.79, 90=4775, 99=27855, 99.9=45215, 99.99=46047] 
+2025-05-18 18:53:11:582 379 sec: 97852 operations; 271.77 current ops/sec; est completion in 6 minutes [INSERT: Count=2717, Max=46271, Min=835, Avg=3668.48, 90=4607, 99=12095, 99.9=43871, 99.99=46271] 
+2025-05-18 18:53:21:582 389 sec: 100370 operations; 251.8 current ops/sec; est completion in 6 minutes [INSERT: Count=2518, Max=62815, Min=1458, Avg=3960.18, 90=5295, 99=20271, 99.9=44095, 99.99=62815] 
+2025-05-18 18:53:31:582 399 sec: 102814 operations; 244.4 current ops/sec; est completion in 6 minutes [INSERT: Count=2444, Max=54655, Min=1581, Avg=4064.38, 90=5119, 99=39967, 99.9=46463, 99.99=54655] 
+2025-05-18 18:53:41:582 409 sec: 105444 operations; 263.03 current ops/sec; est completion in 6 minutes [INSERT: Count=2631, Max=51455, Min=1374, Avg=3800.42, 90=4639, 99=31151, 99.9=44447, 99.99=51455] 
+2025-05-18 18:53:51:581 419 sec: 108093 operations; 264.9 current ops/sec; est completion in 5 minutes [INSERT: Count=2648, Max=47327, Min=1633, Avg=3763.33, 90=4935, 99=12999, 99.9=43935, 99.99=47327] 
+2025-05-18 18:54:01:585 430 sec: 110720 operations; 262.65 current ops/sec; est completion in 5 minutes [INSERT: Count=2628, Max=50303, Min=1613, Avg=3791.98, 90=4611, 99=37439, 99.9=44159, 99.99=50303] 
+2025-05-18 18:54:11:581 439 sec: 113209 operations; 248.92 current ops/sec; est completion in 5 minutes [INSERT: Count=2488, Max=46463, Min=1685, Avg=4004.83, 90=5091, 99=39775, 99.9=44063, 99.99=46463] 
+2025-05-18 18:54:21:583 449 sec: 115684 operations; 247.52 current ops/sec; est completion in 5 minutes [INSERT: Count=2476, Max=49343, Min=1591, Avg=4030.94, 90=4955, 99=40287, 99.9=47199, 99.99=49343] 
+2025-05-18 18:54:31:581 459 sec: 118128 operations; 244.4 current ops/sec; est completion in 5 minutes [INSERT: Count=2443, Max=283391, Min=1393, Avg=4077.18, 90=5059, 99=39583, 99.9=43135, 99.99=283391] 
+2025-05-18 18:54:41:582 469 sec: 120601 operations; 247.32 current ops/sec; est completion in 5 minutes [INSERT: Count=2474, Max=47711, Min=1474, Avg=4031.91, 90=5095, 99=39487, 99.9=45791, 99.99=47711] 
+2025-05-18 18:54:51:580 479 sec: 123118 operations; 251.67 current ops/sec; est completion in 5 minutes [INSERT: Count=2516, Max=45151, Min=1472, Avg=3960.48, 90=5123, 99=37759, 99.9=44543, 99.99=45151] 
+2025-05-18 18:55:01:583 489 sec: 125710 operations; 259.2 current ops/sec; est completion in 4 minutes [INSERT: Count=2592, Max=55935, Min=1051, Avg=3846.04, 90=4883, 99=17215, 99.9=44575, 99.99=55935] 
+2025-05-18 18:55:11:581 499 sec: 128165 operations; 245.5 current ops/sec; est completion in 4 minutes [INSERT: Count=2455, Max=49023, Min=1690, Avg=4045.25, 90=5027, 99=40063, 99.9=44127, 99.99=49023] 
+2025-05-18 18:55:21:582 509 sec: 130700 operations; 253.47 current ops/sec; est completion in 4 minutes [INSERT: Count=2535, Max=47999, Min=981, Avg=3947.25, 90=5095, 99=40287, 99.9=44863, 99.99=47999] 
+2025-05-18 18:55:31:583 519 sec: 133436 operations; 273.63 current ops/sec; est completion in 4 minutes [INSERT: Count=2737, Max=46207, Min=1088, Avg=3643.55, 90=4851, 99=13295, 99.9=42079, 99.99=46207] 
+2025-05-18 18:55:41:580 529 sec: 136082 operations; 264.6 current ops/sec; est completion in 4 minutes [INSERT: Count=2645, Max=47871, Min=979, Avg=3767.93, 90=4615, 99=39647, 99.9=45439, 99.99=47871] 
+2025-05-18 18:55:51:585 540 sec: 138820 operations; 273.69 current ops/sec; est completion in 3 minutes [INSERT: Count=2738, Max=45247, Min=1103, Avg=3641.18, 90=4815, 99=10671, 99.9=43359, 99.99=45247] 
+2025-05-18 18:56:01:581 549 sec: 141622 operations; 280.34 current ops/sec; est completion in 3 minutes [INSERT: Count=2802, Max=49535, Min=1058, Avg=3561.22, 90=4499, 99=11583, 99.9=45215, 99.99=49535] 
+2025-05-18 18:56:11:580 559 sec: 144393 operations; 277.1 current ops/sec; est completion in 3 minutes [INSERT: Count=2772, Max=50047, Min=901, Avg=3598.05, 90=4455, 99=15591, 99.9=44063, 99.99=50047] 
+2025-05-18 18:56:21:579 569 sec: 147069 operations; 267.6 current ops/sec; est completion in 3 minutes [INSERT: Count=2675, Max=51359, Min=1254, Avg=3726.05, 90=4387, 99=39839, 99.9=44639, 99.99=51359] 
+2025-05-18 18:56:31:584 579 sec: 149850 operations; 278.07 current ops/sec; est completion in 3 minutes [INSERT: Count=2782, Max=47871, Min=1336, Avg=3588.33, 90=4591, 99=12423, 99.9=44127, 99.99=47871] 
+2025-05-18 18:56:41:582 589 sec: 152548 operations; 269.83 current ops/sec; est completion in 3 minutes [INSERT: Count=2697, Max=47423, Min=1047, Avg=3691.21, 90=4567, 99=19407, 99.9=44479, 99.99=47423] 
+2025-05-18 18:56:51:582 599 sec: 155279 operations; 273.1 current ops/sec; est completion in 2 minutes [INSERT: Count=2732, Max=49407, Min=1217, Avg=3652.62, 90=4399, 99=19375, 99.9=45055, 99.99=49407] 
+2025-05-18 18:57:01:580 609 sec: 157877 operations; 259.83 current ops/sec; est completion in 2 minutes [INSERT: Count=2598, Max=292095, Min=1102, Avg=3837.65, 90=4755, 99=39423, 99.9=44863, 99.99=292095] 
+2025-05-18 18:57:11:579 619 sec: 160641 operations; 276.4 current ops/sec; est completion in 2 minutes [INSERT: Count=2763, Max=55487, Min=750, Avg=3607.17, 90=4603, 99=12087, 99.9=48031, 99.99=55487] 
+2025-05-18 18:57:21:580 629 sec: 163426 operations; 278.47 current ops/sec; est completion in 2 minutes [INSERT: Count=2785, Max=50911, Min=1348, Avg=3581.38, 90=4687, 99=12927, 99.9=43615, 99.99=50911] 
+2025-05-18 18:57:31:584 639 sec: 166169 operations; 274.3 current ops/sec; est completion in 2 minutes [INSERT: Count=2744, Max=46335, Min=1611, Avg=3635.87, 90=4503, 99=15335, 99.9=43871, 99.99=46335] 
+2025-05-18 18:57:41:580 649 sec: 168933 operations; 276.43 current ops/sec; est completion in 2 minutes [INSERT: Count=2763, Max=56063, Min=1624, Avg=3604.8, 90=4323, 99=13783, 99.9=45151, 99.99=56063] 
+2025-05-18 18:57:51:581 659 sec: 171703 operations; 276.97 current ops/sec; est completion in 1 minute [INSERT: Count=2771, Max=51423, Min=918, Avg=3601.64, 90=4599, 99=11927, 99.9=46047, 99.99=51423] 
+2025-05-18 18:58:01:585 669 sec: 174497 operations; 279.43 current ops/sec; est completion in 1 minute [INSERT: Count=2795, Max=49535, Min=1242, Avg=3566.57, 90=4347, 99=11103, 99.9=43551, 99.99=49535] 
+2025-05-18 18:58:11:580 679 sec: 177230 operations; 273.27 current ops/sec; est completion in 1 minute [INSERT: Count=2732, Max=50047, Min=964, Avg=3644.92, 90=4515, 99=15303, 99.9=44191, 99.99=50047] 
+2025-05-18 18:58:21:582 689 sec: 179900 operations; 267 current ops/sec; est completion in 1 minute [INSERT: Count=2670, Max=49759, Min=757, Avg=3736.67, 90=4939, 99=17231, 99.9=43903, 99.99=49759] 
+2025-05-18 18:58:31:580 699 sec: 182663 operations; 276.3 current ops/sec; est completion in 1 minute [INSERT: Count=2762, Max=50751, Min=1113, Avg=3609.1, 90=4731, 99=12327, 99.9=44159, 99.99=50751] 
+2025-05-18 18:58:41:585 709 sec: 185419 operations; 275.6 current ops/sec; est completion in 56 seconds [INSERT: Count=2758, Max=49119, Min=800, Avg=3617.4, 90=4507, 99=12879, 99.9=45087, 99.99=49119] 
+2025-05-18 18:58:51:580 719 sec: 188111 operations; 269.2 current ops/sec; est completion in 46 seconds [INSERT: Count=2690, Max=49279, Min=1126, Avg=3702.96, 90=4691, 99=39455, 99.9=44383, 99.99=49279] 
+2025-05-18 18:59:01:584 729 sec: 190821 operations; 271 current ops/sec; est completion in 36 seconds [INSERT: Count=2714, Max=47711, Min=773, Avg=3678.84, 90=4339, 99=39263, 99.9=45407, 99.99=47711] 
+2025-05-18 18:59:11:582 739 sec: 193522 operations; 270.1 current ops/sec; est completion in 25 seconds [INSERT: Count=2698, Max=47647, Min=923, Avg=3686.35, 90=4459, 99=39295, 99.9=46879, 99.99=47647] 
+2025-05-18 18:59:21:585 749 sec: 196164 operations; 264.2 current ops/sec; est completion in 15 seconds [INSERT: Count=2642, Max=324351, Min=1012, Avg=3775.38, 90=4759, 99=14543, 99.9=42367, 99.99=324351] 
+2025-05-18 18:59:31:580 759 sec: 198796 operations; 263.23 current ops/sec; est completion in 5 second [INSERT: Count=2632, Max=52223, Min=1571, Avg=3781.61, 90=4803, 99=36447, 99.9=47455, 99.99=52223] 
+2025-05-18 18:59:38:287 766 sec: 200000 operations; 179.49 current ops/sec; [CLEANUP: Count=1, Max=2271231, Min=2269184, Avg=2270208, 90=2271231, 99=2271231, 99.9=2271231, 99.99=2271231] [INSERT: Count=1203, Max=45503, Min=824, Avg=3673.41, 90=4855, 99=14111, 99.9=43807, 99.99=45503] 
+[OVERALL], RunTime(ms), 766704
+[OVERALL], Throughput(ops/sec), 260.85686262234185
+[TOTAL_GCS_G1_Young_Generation], Count, 27
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 378
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.049301947035622615
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 27
+[TOTAL_GC_TIME], Time(ms), 378
+[TOTAL_GC_TIME_%], Time(%), 0.049301947035622615
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 2270208.0
+[CLEANUP], MinLatency(us), 2269184
+[CLEANUP], MaxLatency(us), 2271231
+[CLEANUP], 95thPercentileLatency(us), 2271231
+[CLEANUP], 99thPercentileLatency(us), 2271231
+[INSERT], Operations, 200000
+[INSERT], AverageLatency(us), 3782.62734
+[INSERT], MinLatency(us), 697
+[INSERT], MaxLatency(us), 324351
+[INSERT], 95thPercentileLatency(us), 6223
+[INSERT], 99thPercentileLatency(us), 15767
+[INSERT], Return=OK, 200000

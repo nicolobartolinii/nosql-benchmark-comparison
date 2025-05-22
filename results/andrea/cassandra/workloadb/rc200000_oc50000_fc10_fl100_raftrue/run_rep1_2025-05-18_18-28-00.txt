@@ -1,0 +1,68 @@
+[WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
+[DEBUG]  Running 'mvn -pl site.ycsb:cassandra-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
+/opt/java/openjdk/bin/java -cp /opt/YCSB_PROJECT_ROOT/cassandra/conf:/opt/YCSB_PROJECT_ROOT/cassandra/target/cassandra-binding-0.17.0.jar:/root/.m2/repository/org/apache/htrace/htrace-core4/4.1.0-incubating/htrace-core4-4.1.0-incubating.jar:/opt/YCSB_PROJECT_ROOT/core/target/core-0.17.0.jar:/root/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/root/.m2/repository/io/dropwizard/metrics/metrics-core/3.1.2/metrics-core-3.1.2.jar:/root/.m2/repository/com/datastax/cassandra/cassandra-driver-core/3.0.0/cassandra-driver-core-3.0.0.jar:/root/.m2/repository/io/netty/netty-handler/4.0.33.Final/netty-handler-4.0.33.Final.jar:/root/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/root/.m2/repository/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar:/root/.m2/repository/io/netty/netty-transport/4.0.33.Final/netty-transport-4.0.33.Final.jar:/root/.m2/repository/io/netty/netty-codec/4.0.33.Final/netty-codec-4.0.33.Final.jar:/root/.m2/repository/com/google/guava/guava/16.0.1/guava-16.0.1.jar:/root/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/root/.m2/repository/io/netty/netty-buffer/4.0.33.Final/netty-buffer-4.0.33.Final.jar:/root/.m2/repository/io/netty/netty-common/4.0.33.Final/netty-common-4.0.33.Final.jar site.ycsb.Client -db site.ycsb.db.CassandraCQLClient -s -P workloads/workloadb -p hosts=cassandra-1,cassandra-2,cassandra-3 -p recordcount=200000 -p operationcount=50000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p cassandra.keyspace=ycsb -p cassandra.table=usertable -p cassandra.readconsistencylevel=QUORUM -p cassandra.writeconsistencylevel=QUORUM -t
+Command line: -db site.ycsb.db.CassandraCQLClient -s -P workloads/workloadb -p hosts=cassandra-1,cassandra-2,cassandra-3 -p recordcount=200000 -p operationcount=50000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p cassandra.keyspace=ycsb -p cassandra.table=usertable -p cassandra.readconsistencylevel=QUORUM -p cassandra.writeconsistencylevel=QUORUM -t
+YCSB Client 0.17.0
+
+Loading workload...
+Starting test.
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+2025-05-18 16:40:34:510 0 sec: 0 operations; est completion in 0 second 
+May 18, 2025 4:40:34 PM io.netty.util.internal.PlatformDependent <clinit>
+INFO: Your platform does not provide complete low-level API for accessing direct buffers reliably. Unless explicitly requested, heap buffer will always be preferred to avoid potential system unstability.
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+2025-05-18 16:40:44:492 10 sec: 955 operations; 95.49 current ops/sec; est completion in 8 minutes [READ: Count=914, Max=83647, Min=1200, Avg=4846.12, 90=4727, 99=40959, 99.9=43007, 99.99=83647] [UPDATE: Count=42, Max=16751, Min=1651, Avg=4591.26, 90=9191, 99=16751, 99.9=16751, 99.99=16751] 
+2025-05-18 16:40:54:494 20 sec: 3059 operations; 210.36 current ops/sec; est completion in 5 minutes [READ: Count=2001, Max=43455, Min=1186, Avg=4814.56, 90=4547, 99=40671, 99.9=43071, 99.99=43455] [UPDATE: Count=102, Max=5531, Min=1723, Avg=2907.07, 90=3845, 99=5235, 99.9=5531, 99.99=5531] 
+2025-05-18 16:41:04:491 30 sec: 5358 operations; 229.97 current ops/sec; est completion in 4 minutes [READ: Count=2181, Max=353279, Min=1027, Avg=4415.69, 90=4223, 99=40575, 99.9=43199, 99.99=353279] [UPDATE: Count=118, Max=5323, Min=1686, Avg=3019.8, 90=3847, 99=5079, 99.9=5323, 99.99=5323] 
+2025-05-18 16:41:14:491 40 sec: 7497 operations; 213.9 current ops/sec; est completion in 3 minutes [READ: Count=2031, Max=44127, Min=1202, Avg=4742.62, 90=4827, 99=40671, 99.9=43423, 99.99=44127] [UPDATE: Count=108, Max=9991, Min=1793, Avg=3096.65, 90=3933, 99=5139, 99.9=9991, 99.99=9991] 
+2025-05-18 16:41:24:491 50 sec: 9770 operations; 227.3 current ops/sec; est completion in 3 minutes [READ: Count=2151, Max=43231, Min=1319, Avg=4456.32, 90=4835, 99=40639, 99.9=42847, 99.99=43231] [UPDATE: Count=122, Max=16343, Min=1668, Avg=3098.89, 90=3939, 99=5815, 99.9=16343, 99.99=16343] 
+2025-05-18 16:41:34:492 60 sec: 12009 operations; 223.88 current ops/sec; est completion in 3 minutes [READ: Count=2122, Max=46111, Min=1413, Avg=4522.17, 90=4635, 99=41919, 99.9=44223, 99.99=46111] [UPDATE: Count=117, Max=11783, Min=1508, Avg=3201.87, 90=4015, 99=7955, 99.9=11783, 99.99=11783] 
+2025-05-18 16:41:44:495 70 sec: 14209 operations; 219.96 current ops/sec; est completion in 2 minutes [READ: Count=2082, Max=52863, Min=1046, Avg=4598.97, 90=4711, 99=41919, 99.9=45151, 99.99=52863] [UPDATE: Count=118, Max=6935, Min=1748, Avg=3070.13, 90=3881, 99=5967, 99.9=6935, 99.99=6935] 
+2025-05-18 16:41:54:494 80 sec: 16418 operations; 220.94 current ops/sec; est completion in 2 minutes [READ: Count=2090, Max=48607, Min=1529, Avg=4601.25, 90=4943, 99=41631, 99.9=45055, 99.99=48607] [UPDATE: Count=119, Max=13319, Min=1808, Avg=3272.84, 90=4443, 99=11007, 99.9=13319, 99.99=13319] 
+2025-05-18 16:42:04:492 90 sec: 18736 operations; 231.8 current ops/sec; est completion in 2 minutes [READ: Count=2202, Max=51743, Min=1586, Avg=4352.38, 90=4675, 99=41407, 99.9=45503, 99.99=51743] [UPDATE: Count=116, Max=6371, Min=1856, Avg=3304.15, 90=4215, 99=5991, 99.9=6371, 99.99=6371] 
+2025-05-18 16:42:14:493 100 sec: 20909 operations; 217.3 current ops/sec; est completion in 2 minutes [READ: Count=2072, Max=47743, Min=1245, Avg=4644.52, 90=4883, 99=41503, 99.9=44415, 99.99=47743] [UPDATE: Count=101, Max=7123, Min=1713, Avg=3259.56, 90=4023, 99=5987, 99.9=7123, 99.99=7123] 
+2025-05-18 16:42:24:492 110 sec: 23168 operations; 225.9 current ops/sec; est completion in 2 minutes [READ: Count=2156, Max=43999, Min=844, Avg=4474.65, 90=4647, 99=40607, 99.9=43391, 99.99=43999] [UPDATE: Count=103, Max=7051, Min=1521, Avg=3264.78, 90=4131, 99=5607, 99.9=7051, 99.99=7051] 
+2025-05-18 16:42:34:492 120 sec: 25444 operations; 227.6 current ops/sec; est completion in 1 minute [READ: Count=2145, Max=53855, Min=1499, Avg=4457.66, 90=4867, 99=41791, 99.9=43327, 99.99=53855] [UPDATE: Count=132, Max=5687, Min=1746, Avg=3124.66, 90=3821, 99=5023, 99.9=5687, 99.99=5687] 
+2025-05-18 16:42:44:493 130 sec: 27622 operations; 217.8 current ops/sec; est completion in 1 minute [READ: Count=2083, Max=53727, Min=1460, Avg=4637.55, 90=4947, 99=40735, 99.9=47935, 99.99=53727] [UPDATE: Count=94, Max=6875, Min=1837, Avg=3300.44, 90=4327, 99=6663, 99.9=6875, 99.99=6875] 
+2025-05-18 16:42:54:494 140 sec: 29854 operations; 223.2 current ops/sec; est completion in 1 minute [READ: Count=2122, Max=44191, Min=871, Avg=4530.22, 90=4879, 99=41663, 99.9=43263, 99.99=44191] [UPDATE: Count=111, Max=6075, Min=1600, Avg=3236.5, 90=4029, 99=5955, 99.9=6075, 99.99=6075] 
+2025-05-18 16:43:04:492 150 sec: 32101 operations; 224.7 current ops/sec; est completion in 1 minute [READ: Count=2132, Max=58079, Min=1478, Avg=4502.81, 90=4891, 99=40863, 99.9=43327, 99.99=58079] [UPDATE: Count=115, Max=6019, Min=1895, Avg=3220.19, 90=4283, 99=5943, 99.9=6019, 99.99=6019] 
+2025-05-18 16:43:14:492 160 sec: 34673 operations; 257.2 current ops/sec; est completion in 1 minute [READ: Count=2434, Max=43327, Min=809, Avg=3916.12, 90=4691, 99=38559, 99.9=43039, 99.99=43327] [UPDATE: Count=138, Max=7019, Min=1610, Avg=3131.39, 90=3999, 99=5655, 99.9=7019, 99.99=7019] 
+2025-05-18 16:43:24:493 170 sec: 37673 operations; 300 current ops/sec; est completion in 56 seconds [READ: Count=2825, Max=23935, Min=1660, Avg=3333.18, 90=4407, 99=6431, 99.9=15159, 99.99=23935] [UPDATE: Count=174, Max=6943, Min=1811, Avg=3121.25, 90=3969, 99=4951, 99.9=6943, 99.99=6943] 
+2025-05-18 16:43:34:496 180 sec: 40681 operations; 300.77 current ops/sec; est completion in 42 seconds [READ: Count=2859, Max=182783, Min=1669, Avg=3323.73, 90=4033, 99=6311, 99.9=12271, 99.99=182783] [UPDATE: Count=150, Max=5559, Min=1772, Avg=3137.6, 90=4043, 99=5119, 99.9=5559, 99.99=5559] 
+2025-05-18 16:43:44:494 190 sec: 43697 operations; 301.6 current ops/sec; est completion in 28 seconds [READ: Count=2872, Max=40415, Min=1542, Avg=3308.38, 90=4287, 99=6027, 99.9=8775, 99.99=40415] [UPDATE: Count=143, Max=6107, Min=1839, Avg=3192.73, 90=4039, 99=5371, 99.9=6107, 99.99=6107] 
+2025-05-18 16:43:54:492 200 sec: 46742 operations; 304.53 current ops/sec; est completion in 14 seconds [READ: Count=2891, Max=13519, Min=1618, Avg=3270.69, 90=4227, 99=6303, 99.9=9335, 99.99=13519] [UPDATE: Count=154, Max=16055, Min=1849, Avg=3263.6, 90=4127, 99=8815, 99.9=16055, 99.99=16055] 
+2025-05-18 16:44:04:493 210 sec: 49730 operations; 298.77 current ops/sec; est completion in 2 second [READ: Count=2817, Max=10815, Min=1564, Avg=3338.64, 90=4487, 99=6467, 99.9=10415, 99.99=10815] [UPDATE: Count=171, Max=9023, Min=1911, Avg=3275.18, 90=4411, 99=5507, 99.9=9023, 99.99=9023] 
+2025-05-18 16:44:07:631 213 sec: 50000 operations; 86.01 current ops/sec; [READ: Count=251, Max=7483, Min=1173, Avg=3357.41, 90=4523, 99=6147, 99.9=7483, 99.99=7483] [CLEANUP: Count=1, Max=2230271, Min=2228224, Avg=2229248, 90=2230271, 99=2230271, 99.9=2230271, 99.99=2230271] [UPDATE: Count=19, Max=4531, Min=2256, Avg=3197.05, 90=4135, 99=4531, 99.9=4531, 99.99=4531] 
+[OVERALL], RunTime(ms), 213141
+[OVERALL], Throughput(ops/sec), 234.58649438634518
+[TOTAL_GCS_G1_Young_Generation], Count, 6
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 69
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.03237293622531564
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 6
+[TOTAL_GC_TIME], Time(ms), 69
+[TOTAL_GC_TIME_%], Time(%), 0.03237293622531564
+[READ], Operations, 47433
+[READ], AverageLatency(us), 4145.731769021567
+[READ], MinLatency(us), 809
+[READ], MaxLatency(us), 353279
+[READ], 95thPercentileLatency(us), 5663
+[READ], 99thPercentileLatency(us), 40351
+[READ], Return=OK, 47433
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 2229248.0
+[CLEANUP], MinLatency(us), 2228224
+[CLEANUP], MaxLatency(us), 2230271
+[CLEANUP], 95thPercentileLatency(us), 2230271
+[CLEANUP], 99thPercentileLatency(us), 2230271
+[UPDATE], Operations, 2567
+[UPDATE], AverageLatency(us), 3198.8379431242697
+[UPDATE], MinLatency(us), 1508
+[UPDATE], MaxLatency(us), 16751
+[UPDATE], 95thPercentileLatency(us), 4767
+[UPDATE], 99thPercentileLatency(us), 6727
+[UPDATE], Return=OK, 2567

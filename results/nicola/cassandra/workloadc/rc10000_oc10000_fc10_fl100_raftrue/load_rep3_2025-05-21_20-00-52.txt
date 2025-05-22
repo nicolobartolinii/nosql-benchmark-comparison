@@ -9,8 +9,14 @@ Starting test.
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+<<<<<<< HEAD:results/nicola/cassandra/workloadc/rc10000_oc10000_fc10_fl100_raftrue/load_rep3_2025-05-21_20-00-52.txt
 2025-05-21 18:01:50:573 0 sec: 0 operations; est completion in 0 second 
 May 21, 2025 6:01:50 PM io.netty.util.internal.PlatformDependent <clinit>
+=======
+<<<<<<<< Updated upstream:results/nicolò/cassandra/cassandra_workloadc_run_rep3_20250508145536.txt
+2025-05-08 14:55:39:212 0 sec: 0 operations; est completion in 0 second 
+May 08, 2025 2:55:39 PM io.netty.util.internal.PlatformDependent <clinit>
+>>>>>>> origin/andrea:results/nicolò/cassandra/cassandra_workloadc_run_rep3_20250508145536.txt
 INFO: Your platform does not provide complete low-level API for accessing direct buffers reliably. Unless explicitly requested, heap buffer will always be preferred to avoid potential system unstability.
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
 2025-05-21 18:02:00:556 10 sec: 5795 operations; 579.5 current ops/sec; est completion in 8 second [INSERT: Count=5796, Max=43263, Min=136, Avg=794.59, 90=832, 99=2429, 99.9=42335, 99.99=42719] 
@@ -24,8 +30,47 @@ DBWrapper: report latency for each error is false and specific error codes to tr
 [TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
 [TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
 [TOTAL_GCs], Count, 3
+<<<<<<< HEAD:results/nicola/cassandra/workloadc/rc10000_oc10000_fc10_fl100_raftrue/load_rep3_2025-05-21_20-00-52.txt
 [TOTAL_GC_TIME], Time(ms), 6
 [TOTAL_GC_TIME_%], Time(%), 0.04011767852366943
+=======
+[TOTAL_GC_TIME], Time(ms), 16
+[TOTAL_GC_TIME_%], Time(%), 0.04185413832792717
+[READ], Operations, 10000
+[READ], AverageLatency(us), 3061.0405
+[READ], MinLatency(us), 1482
+[READ], MaxLatency(us), 39647
+[READ], 95thPercentileLatency(us), 3915
+[READ], 99thPercentileLatency(us), 4191
+========
+2025-05-18 13:20:58:786 0 sec: 0 operations; est completion in 0 second 
+May 18, 2025 1:20:58 PM io.netty.util.internal.PlatformDependent <clinit>
+INFO: Your platform does not provide complete low-level API for accessing direct buffers reliably. Unless explicitly requested, heap buffer will always be preferred to avoid potential system unstability.
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+2025-05-18 13:21:08:768 10 sec: 1599 operations; 159.88 current ops/sec; est completion in 53 seconds [READ: Count=1599, Max=13999, Min=935, Avg=2907.68, 90=3591, 99=5259, 99.9=8463, 99.99=13999] 
+2025-05-18 13:21:18:771 20 sec: 4704 operations; 310.41 current ops/sec; est completion in 23 seconds [READ: Count=3106, Max=18575, Min=924, Avg=3199.07, 90=4259, 99=6927, 99.9=11471, 99.99=18575] 
+2025-05-18 13:21:28:769 30 sec: 7855 operations; 315.16 current ops/sec; est completion in 9 second [READ: Count=3150, Max=14263, Min=788, Avg=3158.95, 90=4059, 99=7567, 99.9=11735, 99.99=14263] 
+2025-05-18 13:21:38:300 39 sec: 10000 operations; 225.08 current ops/sec; [READ: Count=2145, Max=12367, Min=843, Avg=3390.72, 90=4635, 99=8003, 99.9=11287, 99.99=12367] [CLEANUP: Count=1, Max=2228223, Min=2226176, Avg=2227200, 90=2228223, 99=2228223, 99.9=2228223, 99.99=2228223] 
+[OVERALL], RunTime(ms), 39533
+[OVERALL], Throughput(ops/sec), 252.95322894796752
+[TOTAL_GCS_G1_Young_Generation], Count, 2
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 6
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.01517719373687805
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 2
+[TOTAL_GC_TIME], Time(ms), 6
+[TOTAL_GC_TIME_%], Time(%), 0.01517719373687805
+[READ], Operations, 10000
+[READ], AverageLatency(us), 3180.9483
+[READ], MinLatency(us), 788
+[READ], MaxLatency(us), 18575
+[READ], 95thPercentileLatency(us), 4923
+[READ], 99thPercentileLatency(us), 7271
+>>>>>>>> Stashed changes:results/andrea/cassandra/workloadc/rc10000_oc10000_fc10_fl100_raftrue/run_rep1_2025-05-18_15-19-19.txt
+[READ], Return=OK, 10000
+>>>>>>> origin/andrea:results/nicolò/cassandra/cassandra_workloadc_run_rep3_20250508145536.txt
 [CLEANUP], Operations, 1
 [CLEANUP], AverageLatency(us), 2227200.0
 [CLEANUP], MinLatency(us), 2226176
