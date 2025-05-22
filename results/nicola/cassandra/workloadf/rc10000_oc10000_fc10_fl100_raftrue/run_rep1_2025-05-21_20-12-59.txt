@@ -1,0 +1,54 @@
+[WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
+[DEBUG]  Running 'mvn -pl site.ycsb:cassandra-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
+/opt/java/openjdk/bin/java -cp /opt/YCSB_PROJECT_ROOT/cassandra/conf:/opt/YCSB_PROJECT_ROOT/cassandra/target/cassandra-binding-0.17.0.jar:/root/.m2/repository/org/apache/htrace/htrace-core4/4.1.0-incubating/htrace-core4-4.1.0-incubating.jar:/opt/YCSB_PROJECT_ROOT/core/target/core-0.17.0.jar:/root/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/root/.m2/repository/io/dropwizard/metrics/metrics-core/3.1.2/metrics-core-3.1.2.jar:/root/.m2/repository/com/datastax/cassandra/cassandra-driver-core/3.0.0/cassandra-driver-core-3.0.0.jar:/root/.m2/repository/io/netty/netty-handler/4.0.33.Final/netty-handler-4.0.33.Final.jar:/root/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/root/.m2/repository/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar:/root/.m2/repository/io/netty/netty-transport/4.0.33.Final/netty-transport-4.0.33.Final.jar:/root/.m2/repository/io/netty/netty-codec/4.0.33.Final/netty-codec-4.0.33.Final.jar:/root/.m2/repository/com/google/guava/guava/16.0.1/guava-16.0.1.jar:/root/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/root/.m2/repository/io/netty/netty-buffer/4.0.33.Final/netty-buffer-4.0.33.Final.jar:/root/.m2/repository/io/netty/netty-common/4.0.33.Final/netty-common-4.0.33.Final.jar site.ycsb.Client -db site.ycsb.db.CassandraCQLClient -s -P workloads/workloadf -p hosts=cassandra-1,cassandra-2,cassandra-3 -p recordcount=10000 -p operationcount=10000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p cassandra.keyspace=ycsb -p cassandra.table=usertable -p cassandra.readconsistencylevel=QUORUM -p cassandra.writeconsistencylevel=QUORUM -t
+Command line: -db site.ycsb.db.CassandraCQLClient -s -P workloads/workloadf -p hosts=cassandra-1,cassandra-2,cassandra-3 -p recordcount=10000 -p operationcount=10000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p cassandra.keyspace=ycsb -p cassandra.table=usertable -p cassandra.readconsistencylevel=QUORUM -p cassandra.writeconsistencylevel=QUORUM -t
+YCSB Client 0.17.0
+
+Loading workload...
+Starting test.
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+2025-05-21 18:14:13:774 0 sec: 0 operations; est completion in 0 second 
+May 21, 2025 6:14:13 PM io.netty.util.internal.PlatformDependent <clinit>
+INFO: Your platform does not provide complete low-level API for accessing direct buffers reliably. Unless explicitly requested, heap buffer will always be preferred to avoid potential system unstability.
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+2025-05-21 18:14:23:759 10 sec: 9014 operations; 901.4 current ops/sec; est completion in 2 second [READ: Count=9015, Max=41855, Min=108, Avg=362.11, 90=678, 99=1284, 99.9=3041, 99.99=41247] [READ-MODIFY-WRITE: Count=4553, Max=42143, Min=252, Avg=673.02, 90=1286, 99=2455, 99.9=5363, 99.99=42143] [UPDATE: Count=4555, Max=3991, Min=102, Avg=305.3, 90=581, 99=1141, 99.9=2167, 99.99=3991] 
+2025-05-21 18:14:26:427 12 sec: 10000 operations; 369.57 current ops/sec; [READ: Count=985, Max=2237, Min=113, Avg=310.16, 90=540, 99=847, 99.9=1295, 99.99=2237] [READ-MODIFY-WRITE: Count=494, Max=1829, Min=266, Avg=556.58, 90=973, 99=1370, 99.9=1829, 99.99=1829] [CLEANUP: Count=1, Max=2226175, Min=2224128, Avg=2225152, 90=2226175, 99=2226175, 99.9=2226175, 99.99=2226175] [UPDATE: Count=492, Max=741, Min=99, Avg=252.98, 90=435, 99=656, 99.9=741, 99.99=741] 
+[OVERALL], RunTime(ms), 12668
+[OVERALL], Throughput(ops/sec), 789.3905904641616
+[TOTAL_GCS_G1_Young_Generation], Count, 2
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 3
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.02368171771392485
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 2
+[TOTAL_GC_TIME], Time(ms), 3
+[TOTAL_GC_TIME_%], Time(%), 0.02368171771392485
+[READ], Operations, 10000
+[READ], AverageLatency(us), 356.9898
+[READ], MinLatency(us), 108
+[READ], MaxLatency(us), 41855
+[READ], 95thPercentileLatency(us), 857
+[READ], 99thPercentileLatency(us), 1274
+[READ], Return=OK, 10000
+[READ-MODIFY-WRITE], Operations, 5047
+[READ-MODIFY-WRITE], AverageLatency(us), 661.6215573608084
+[READ-MODIFY-WRITE], MinLatency(us), 252
+[READ-MODIFY-WRITE], MaxLatency(us), 42143
+[READ-MODIFY-WRITE], 95thPercentileLatency(us), 1609
+[READ-MODIFY-WRITE], 99thPercentileLatency(us), 2427
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 2225152.0
+[CLEANUP], MinLatency(us), 2224128
+[CLEANUP], MaxLatency(us), 2226175
+[CLEANUP], 95thPercentileLatency(us), 2226175
+[CLEANUP], 99thPercentileLatency(us), 2226175
+[UPDATE], Operations, 5047
+[UPDATE], AverageLatency(us), 300.20269467010104
+[UPDATE], MinLatency(us), 99
+[UPDATE], MaxLatency(us), 3991
+[UPDATE], 95thPercentileLatency(us), 737
+[UPDATE], 99thPercentileLatency(us), 1117
+[UPDATE], Return=OK, 5047
