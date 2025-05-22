@@ -170,7 +170,7 @@ function run_ycsb_tests() {
         echo "INFO: Completed Scenario ${current_user_scenario_num}"
         sleep 10 
     done 
-
+    
     echo "INFO: Tutti i test YCSB per MongoDB completati. Controlla la directory 'results/${DB_USER_SUBDIR}'."
 }
 

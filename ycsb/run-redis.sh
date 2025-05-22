@@ -54,39 +54,39 @@ LOAD_OUTPUT_FILE="${OUTPUT_DIR}/load_rep${REP_NUM}_${GENERATED_TIMESTAMP}.txt"
 echo "INFO [${DB_NAME}]: Esecuzione LOAD. Output: ${LOAD_OUTPUT_FILE}"
 "${YCSB_PATH}" load redis -s \
     -P "${WORKLOAD_PATH_PREFIX}${WORKLOAD_NAME}" \
-    -p redis.hosts="${REDIS_NODES}" \
-    -p redis.cluster=true \
+            -p redis.hosts="${REDIS_NODES}" \
+            -p redis.cluster=true \
     -p recordcount="${RECORD_COUNT}" \
     -p operationcount="${OPERATION_COUNT}" \
     -p fieldcount="${FIELD_COUNT}" \
     -p fieldlength="${FIELD_LENGTH}" \
     -p readallfields="${READ_ALL_FIELDS_BOOL}" \
-    > "${LOAD_OUTPUT_FILE}" 2>&1
+            > "${LOAD_OUTPUT_FILE}" 2>&1
 
-if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
+        if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
     echo "ERROR [${DB_NAME}]: LOAD fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}. Vedi ${LOAD_OUTPUT_FILE}"
-    tail -n 20 "${LOAD_OUTPUT_FILE}"
-fi
-echo "INFO [${DB_NAME}]: LOAD completato."
+            tail -n 20 "${LOAD_OUTPUT_FILE}"
+        fi
+        echo "INFO [${DB_NAME}]: LOAD completato."
 
 # --- YCSB Run Phase ---
 RUN_OUTPUT_FILE="${OUTPUT_DIR}/run_rep${REP_NUM}_${GENERATED_TIMESTAMP}.txt"
 echo "INFO [${DB_NAME}]: Esecuzione RUN. Output: ${RUN_OUTPUT_FILE}"
 "${YCSB_PATH}" run redis -s \
     -P "${WORKLOAD_PATH_PREFIX}${WORKLOAD_NAME}" \
-    -p redis.hosts="${REDIS_NODES}" \
-    -p redis.cluster=true \
+            -p redis.hosts="${REDIS_NODES}" \
+            -p redis.cluster=true \
     -p recordcount="${RECORD_COUNT}" \
     -p operationcount="${OPERATION_COUNT}" \
     -p fieldcount="${FIELD_COUNT}" \
     -p fieldlength="${FIELD_LENGTH}" \
     -p readallfields="${READ_ALL_FIELDS_BOOL}" \
-    > "${RUN_OUTPUT_FILE}" 2>&1
+            > "${RUN_OUTPUT_FILE}" 2>&1
 
-if ! grep -q "\[OVERALL\], RunTime(ms)" "${RUN_OUTPUT_FILE}"; then
+        if ! grep -q "\[OVERALL\], RunTime(ms)" "${RUN_OUTPUT_FILE}"; then
     echo "ERROR [${DB_NAME}]: RUN fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}. Vedi ${RUN_OUTPUT_FILE}"
-    tail -n 20 "${RUN_OUTPUT_FILE}"
-fi
-echo "INFO [${DB_NAME}]: RUN completato."
+            tail -n 20 "${RUN_OUTPUT_FILE}"
+        fi
+        echo "INFO [${DB_NAME}]: RUN completato."
 
 echo "INFO [${DB_NAME}]: Test run ${WORKLOAD_NAME}, Rep ${REP_NUM} completato."

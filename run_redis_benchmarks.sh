@@ -47,7 +47,7 @@ function start_redis_cluster() {
             slots_assigned=$(docker exec redis-node1 redis-cli -c cluster info 2>/dev/null | grep 'cluster_slots_assigned:16384' || true)
             if [[ -n "${slots_assigned}" ]]; then
                 echo "INFO: Tutti e 16384 gli slot sono assegnati."
-                CLUSTER_OK=true
+            CLUSTER_OK=true
                 docker exec redis-node1 redis-cli -c cluster nodes || true # Stampa nodi per info
             else
                 echo "WARN: Cluster Redis OK ma slot non completamente assegnati. Attendo..."

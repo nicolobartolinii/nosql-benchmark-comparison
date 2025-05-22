@@ -53,10 +53,10 @@ echo "INFO [${DB_NAME}]: Creating output directory: ${OUTPUT_DIR}"
 mkdir -p "${OUTPUT_DIR}"
 
 # --- Database Cleanup ---
-echo "INFO [${DB_NAME}]: Pulizia database ycsb (host: ${MONGO_HOST_FOR_CLEANUP})..."
+        echo "INFO [${DB_NAME}]: Pulizia database ycsb (host: ${MONGO_HOST_FOR_CLEANUP})..."
 # Use --quiet for mongosh to suppress verbose output, errors will still be shown
 mongosh --quiet --host "${MONGO_HOST_FOR_CLEANUP}" --port 27017 --eval 'db.getSiblingDB("ycsb").dropDatabase()' || echo "WARN [${DB_NAME}]: Pulizia DB fallita o DB non esistente (Continuing)."
-echo "INFO [${DB_NAME}]: Pulizia database completata."
+        echo "INFO [${DB_NAME}]: Pulizia database completata."
 sleep 2 # Brief pause after drop
 
 # --- YCSB Load Phase ---
@@ -70,16 +70,16 @@ echo "INFO [${DB_NAME}]: Esecuzione LOAD. Output: ${LOAD_OUTPUT_FILE}"
     -p fieldcount="${FIELD_COUNT}" \
     -p fieldlength="${FIELD_LENGTH}" \
     -p readallfields="${READ_ALL_FIELDS_BOOL}" \
-    -p mongodb.url="${MONGO_URL}" \
-    -p mongodb.batchsize=${MONGO_BATCH_SIZE} \
+            -p mongodb.url="${MONGO_URL}" \
+            -p mongodb.batchsize=${MONGO_BATCH_SIZE} \
     > "${LOAD_OUTPUT_FILE}" 2>&1 # Redirect stdout and stderr
-
-if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
+        
+        if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
     echo "ERROR [${DB_NAME}]: LOAD fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}. Vedi ${LOAD_OUTPUT_FILE}"
     # Consider exiting if load fails, or let the orchestrator decide
     # exit 1 
-fi
-echo "INFO [${DB_NAME}]: LOAD completato."
+        fi
+        echo "INFO [${DB_NAME}]: LOAD completato."
 
 # --- YCSB Run Phase ---
 RUN_OUTPUT_FILE="${OUTPUT_DIR}/run_rep${REP_NUM}_${GENERATED_TIMESTAMP}.txt"
@@ -92,13 +92,13 @@ echo "INFO [${DB_NAME}]: Esecuzione RUN. Output: ${RUN_OUTPUT_FILE}"
     -p fieldcount="${FIELD_COUNT}" \
     -p fieldlength="${FIELD_LENGTH}" \
     -p readallfields="${READ_ALL_FIELDS_BOOL}" \
-    -p mongodb.url="${MONGO_URL}" \
+            -p mongodb.url="${MONGO_URL}" \
     > "${RUN_OUTPUT_FILE}" 2>&1 # Redirect stdout and stderr
 
-if ! grep -q "\[OVERALL\], RunTime(ms)" "${RUN_OUTPUT_FILE}"; then
+        if ! grep -q "\[OVERALL\], RunTime(ms)" "${RUN_OUTPUT_FILE}"; then
     echo "ERROR [${DB_NAME}]: RUN fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}. Vedi ${RUN_OUTPUT_FILE}"
     # exit 1
-fi
-echo "INFO [${DB_NAME}]: RUN completato."
+        fi
+        echo "INFO [${DB_NAME}]: RUN completato."
 
 echo "INFO [${DB_NAME}]: Test run ${WORKLOAD_NAME}, Rep ${REP_NUM} completato."

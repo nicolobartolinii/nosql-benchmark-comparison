@@ -56,7 +56,7 @@ function start_cassandra_cluster() {
         echo "ERROR: Cluster Cassandra non completamente avviato dopo ${MAX_RETRIES} tentativi. Controllo manuale richiesto."
         # Mostra lo status corrente se possibile
         if docker ps --filter "name=cassandra-1" --filter "status=running" --format "{{.Names}}" | grep -q "cassandra-1"; then
-            docker exec cassandra-1 nodetool status || true
+        docker exec cassandra-1 nodetool status || true
         else
             echo "ERROR: Container cassandra-1 non raggiungibile per status finale."
         fi
