@@ -13,7 +13,7 @@ Il framework di benchmarking utilizzato è Yahoo! Cloud Serving Benchmark (YCSB)
 nosql-benchmark-comparison/
   ├─ redis/                    ← Configurazione cluster Redis
   │    └─ docker-compose.yml
-  ├─ mongo/                    ← Configurazione cluster MongoDB sharded (con 2 shard)
+  ├─ mongo/                    ← Configurazione cluster MongoDB
   │    └─ docker-compose.yml
   ├─ cassandra/                ← Configurazione ring Cassandra
   │    └─ docker-compose.yml

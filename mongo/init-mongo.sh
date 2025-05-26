@@ -61,7 +61,8 @@ rs.initiate(
     _id: "shard1RS",
     members: [
       { _id : 0, host : "shard1a:27018" },
-      { _id : 1, host : "shard1b:27018" }
+      { _id : 1, host : "shard1b:27018" },
+      { _id : 2, host : "shard1c:27018" }
     ]
   }
 )
@@ -97,7 +98,7 @@ if [ "$SHARD_ALREADY_ADDED" = "true" ]; then
   echo "Shard 'shard1RS' is already part of the cluster. Skipping addShard."
 else
   mongo --host mongos --port 27017 <<EOF
-sh.addShard("shard1RS/shard1a:27018,shard1b:27018")
+sh.addShard("shard1RS/shard1a:27018,shard1b:27018,shard1c:27018")
 EOF
   ADD_SHARD_STATUS=$?
   if [ $ADD_SHARD_STATUS -eq 0 ]; then
