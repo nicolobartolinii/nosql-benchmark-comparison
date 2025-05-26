@@ -21,8 +21,8 @@ USER_CPU_MAP = {
 SCENARIO_PARAMS_TO_NAME_MAP = {
     # (recordcount, operationcount, fieldcount, fieldlength, readallfields): ("Short Name for Legend", "Full Description for Titles")
     (10000, 10000, 10, 100, True):  ("S1: Baseline", "S1: Baseline (RC10k, OC10k, FC10, FL100, RAF)"),
-    (50000, 25000, 10, 100, True):  ("S2: Dataset Medio", "S2: Dataset Medio (RC50k, OC25k, FC10, FL100, RAF)"),
-    (200000, 50000, 10, 100, True): ("S3: Dataset Grande", "S3: Dataset Grande (RC200k, OC50k, FC10, FL100, RAF)"),
+    (50000, 25000, 10, 100, True):  ("S2: Dataset Medio", "S2: Dataset Medio (RC100k, OC10k, FC10, FL100, RAF)"),
+    (200000, 50000, 10, 100, True): ("S3: Dataset Grande", "S3: Dataset Grande (RC250k, OC10k, FC10, FL100, RAF)"),
     (10000, 10000, 1, 1000, True): ("S4: Campo Singolo Grande", "S4: Campo Singolo Grande (RC10k, OC10k, FC1, FL1k, RAF)"),
     (10000, 10000, 10, 100, False): ("S5: Lettura Selettiva", "S5: Lettura Selettiva Campi (RC10k, OC10k, FC10, FL100, !RAF)")
 }

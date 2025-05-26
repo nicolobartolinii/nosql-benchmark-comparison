@@ -92,11 +92,11 @@ I test sono strutturati per eseguire 5 scenari differenti per ciascuno dei 6 wor
 1.  **Scenario 1 (Baseline):**
     *   `recordcount=10000`, `operationcount=10000`
     *   `fieldcount=10`, `fieldlength=100`, `readallfields=true` (Default YCSB)
-2.  **Scenario 2 (Dataset Medio Modificato):**
-    *   `recordcount=50000`, `operationcount=25000`
+2.  **Scenario 2 (Dataset Medio):**
+    *   `recordcount=100000`, `operationcount=10000`
     *   `fieldcount=10`, `fieldlength=100`, `readallfields=true`
-3.  **Scenario 3 (Dataset Grande Modificato):**
-    *   `recordcount=200000`, `operationcount=50000`
+3.  **Scenario 3 (Dataset Grande):**
+    *   `recordcount=250000`, `operationcount=10000`
     *   `fieldcount=10`, `fieldlength=100`, `readallfields=true`
 4.  **Scenario 4 (Campo Singolo Grande):**
     *   `recordcount=10000`, `operationcount=10000`
