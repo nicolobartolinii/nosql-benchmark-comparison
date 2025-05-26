@@ -88,11 +88,14 @@ function run_ycsb_tests_redis() {
     mkdir -p "$(pwd)/results/${DB_USER_SUBDIR}"
 
     declare -a SCENARIOS_DEF
-    SCENARIOS_DEF[0]="10000 10000 10 100 true"
-    SCENARIOS_DEF[1]="100000 10000 10 100 true"
-    SCENARIOS_DEF[2]="250000 10000 10 100 true"
-    SCENARIOS_DEF[3]="10000 10000 1 1000 true"
-    SCENARIOS_DEF[4]="10000 10000 10 100 false"
+    # Params: RC OC FC FL RAF THREADS
+    SCENARIOS_DEF[0]="10000 10000 10 100 true 1"    # S1
+    SCENARIOS_DEF[1]="100000 10000 10 100 true 1"   # S2
+    SCENARIOS_DEF[2]="250000 10000 10 100 true 1"   # S3
+    SCENARIOS_DEF[3]="10000 10000 1 1000 true 1"   # S4
+    SCENARIOS_DEF[4]="10000 10000 10 100 false 1"  # S5
+    SCENARIOS_DEF[5]="10000 10000 10 100 true 8"    # S6 (S1 @ 8 Threads)
+    SCENARIOS_DEF[6]="250000 10000 10 100 true 8"   # S7 (S3 @ 8 Threads)
 
     declare -a scenario_indices_to_run
     if [ "$#" -eq 0 ]; then
@@ -100,8 +103,8 @@ function run_ycsb_tests_redis() {
         echo "INFO: Nessuno scenario specificato, esecuzione di tutti gli scenari Redis (1-${#SCENARIOS_DEF[@]})."
     else
         for user_scenario_num_arg in "$@"; do
-            if ! [[ "${user_scenario_num_arg}" =~ ^[1-5]$ ]]; then
-                echo "WARN: Numero di scenario Redis '${user_scenario_num_arg}' non valido (deve essere tra 1 e ${#SCENARIOS_DEF[@]}). Verrà ignorato."
+            if ! [[ "${user_scenario_num_arg}" =~ ^[1-7]$ ]]; then
+                echo "WARN: Numero di scenario Redis '${user_scenario_num_arg}' non valido. Verrà ignorato."
                 continue
             fi
             local target_index=$((user_scenario_num_arg - 1))
@@ -113,75 +116,48 @@ function run_ycsb_tests_redis() {
                 done
                 if [ "${already_added}" -eq 0 ]; then scenario_indices_to_run+=("${target_index}"); fi
             else
-                echo "WARN: Scenario Redis '${user_scenario_num_arg}' (indice ${target_index}) non definito internamente. Verrà ignorato."
+                echo "WARN: Scenario Redis '${user_scenario_num_arg}' (indice ${target_index}) non definito. Verrà ignorato."
             fi
         done
-        if [ ${#scenario_indices_to_run[@]} -eq 0 ]; then
-            echo "ERROR: Nessuno scenario Redis valido specificato. Uscita."; exit 1;
-        fi
-        
+        if [ ${#scenario_indices_to_run[@]} -eq 0 ]; then echo "ERROR: Nessuno scenario Redis valido. Uscita."; exit 1; fi
         local n_sort=${#scenario_indices_to_run[@]}
         if [ "${n_sort}" -gt 1 ]; then 
             for ((i_sort = 0; i_sort < n_sort; i_sort++)); do
                 for ((j_sort = 0; j_sort < n_sort - i_sort - 1; j_sort++)); do
                     if ((${scenario_indices_to_run[j_sort]} > ${scenario_indices_to_run[j_sort+1]})); then
-                        local temp_sort=${scenario_indices_to_run[j_sort]}
-                        scenario_indices_to_run[j_sort]=${scenario_indices_to_run[j_sort+1]}
-                        scenario_indices_to_run[j_sort+1]=$temp_sort
-                    fi
-                done
-            done
-        fi
-
-        local user_friendly_scenarios_selected_str=""
-        local num_to_print=${#scenario_indices_to_run[@]}
-        if [ "$num_to_print" -gt 0 ]; then
-            for ((p_idx = 0; p_idx < num_to_print; p_idx++)); do
-                user_friendly_scenarios_selected_str+="$((scenario_indices_to_run[p_idx] + 1)) "
-            done
-            user_friendly_scenarios_selected_str=${user_friendly_scenarios_selected_str%% }
-        fi
+                        local temp_sort=${scenario_indices_to_run[j_sort]}; scenario_indices_to_run[j_sort]=${scenario_indices_to_run[j_sort+1]}; scenario_indices_to_run[j_sort+1]=$temp_sort; fi
+                done; done; fi
+        local user_friendly_scenarios_selected_str=""; local num_to_print=${#scenario_indices_to_run[@]}
+        if [ "$num_to_print" -gt 0 ]; then for ((p_idx = 0; p_idx < num_to_print; p_idx++)); do user_friendly_scenarios_selected_str+="$((scenario_indices_to_run[p_idx] + 1)) "; done; user_friendly_scenarios_selected_str=${user_friendly_scenarios_selected_str%% }; fi
         echo "INFO: Esecuzione scenari Redis specificati: ${user_friendly_scenarios_selected_str}"
     fi
 
     local num_selected_indices=${#scenario_indices_to_run[@]}
-    if [ "$num_selected_indices" -eq 0 ] && [ "$#" -ne 0 ]; then
-        echo "ERROR: Logica interna ha portato a nessun scenario Redis selezionato nonostante gli argomenti. Uscita."; exit 1;
-    elif [ "$num_selected_indices" -eq 0 ] && [ "$#" -eq 0 ]; then
-        echo "INFO: Nessuno scenario Redis definito per l'esecuzione."
-    fi
+    if [ "$num_selected_indices" -eq 0 ] && [ "$#" -ne 0 ]; then echo "ERROR: Logica interna errore. Uscita."; exit 1;
+    elif [ "$num_selected_indices" -eq 0 ] && [ "$#" -eq 0 ]; then echo "INFO: Nessuno scenario definito."; fi
 
     for (( k=0; k < num_selected_indices; k++ )); do
         local scenario_idx=${scenario_indices_to_run[k]}
         local current_user_scenario_num=$((scenario_idx + 1))
-        read -r RC OC FC FL RAF <<< "${SCENARIOS_DEF[${scenario_idx}]}"
-        echo "INFO: Starting Scenario ${current_user_scenario_num} for Redis: RC=${RC}, OC=${OC}, FC=${FC}, FL=${FL}, RAF=${RAF}"
+        read -r RC OC FC FL RAF THREADS <<< "${SCENARIOS_DEF[${scenario_idx}]}"
+        echo "INFO: Starting Scenario ${current_user_scenario_num} for Redis: RC=${RC}, OC=${OC}, FC=${FC}, FL=${FL}, RAF=${RAF}, Threads=${THREADS}"
 
         for workload_name in "${DEFAULT_WORKLOADS[@]}"; do
             echo "INFO: Processing Workload: ${workload_name} for Scenario ${current_user_scenario_num}"
             for (( rep_num=1; rep_num<=${REPETITIONS}; rep_num++ )); do
                 echo "INFO: Repetition ${rep_num}/${REPETITIONS} for Workload ${workload_name}, Scenario ${current_user_scenario_num}"
-                
                 CONTAINER_NAME="ycsb_redis_runner_scen${current_user_scenario_num}_wl${workload_name}_rep${rep_num}"
-                echo "DEBUG: YCSB_IMAGE_NAME is '${YCSB_IMAGE_NAME}'"
-                echo "DEBUG: Attempting to run container with name: '${CONTAINER_NAME}'"
-
-                # Construct the command string for bash -c carefully
-                CMD_IN_CONTAINER="set -xeuo pipefail && ${YCSB_REDIS_SCRIPT_PATH_IN_CONTAINER} '${workload_name}' '${rep_num}' '${RC}' '${OC}' '${FC}' '${FL}' '${RAF}' '${DB_USER_SUBDIR}'"
-                echo "DEBUG: Command in container for bash -c: ${CMD_IN_CONTAINER}"
-
+                CMD_IN_CONTAINER="set -xeuo pipefail && ${YCSB_REDIS_SCRIPT_PATH_IN_CONTAINER} '${workload_name}' '${rep_num}' '${RC}' '${OC}' '${FC}' '${FL}' '${RAF}' '${DB_USER_SUBDIR}' '${THREADS}'"
                 docker run --rm --name "${CONTAINER_NAME}" --network "${DOCKER_NETWORK}" -v "$(pwd)/results:/results" --env-file .env "${YCSB_IMAGE_NAME}" bash -c "${CMD_IN_CONTAINER}"
-                
                 echo "INFO: Completed Repetition ${rep_num} for Workload ${workload_name}, Scenario ${current_user_scenario_num}"
-                sleep 5 
-            done 
+                sleep 5
+            done
             echo "INFO: Completed all repetitions for Workload ${workload_name}, Scenario ${current_user_scenario_num}"
-        done 
+        done
         echo "INFO: Completed Scenario ${current_user_scenario_num} for Redis"
-        sleep 10 
-    done 
-
-    echo "INFO: Tutti i test YCSB per Redis completati. Controlla la directory 'results/${DB_USER_SUBDIR}'."
+        sleep 10
+    done
+    echo "INFO: Tutti i test YCSB per Redis completati. Controlla 'results/${DB_USER_SUBDIR}'."
 }
 
 trap 'echo "WARN: Script interrotto. Tentativo di pulizia finale..."; stop_redis_cluster' EXIT SIGINT SIGTERM
