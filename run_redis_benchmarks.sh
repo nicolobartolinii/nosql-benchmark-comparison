@@ -6,7 +6,7 @@ REDIS_SETUP_DIR="redis"
 YCSB_IMAGE_NAME="nosql-benchmark/ycsb"
 YCSB_REDIS_SCRIPT_PATH_IN_CONTAINER="./run-redis.sh"
 DOCKER_NETWORK="shared-net"
-DB_USER_SUBDIR="nicolò" # Your user-specific results subdirectory
+DB_USER_SUBDIR="nick" # Your user-specific results subdirectory
 
 # Default YCSB workloads
 DEFAULT_WORKLOADS=("workloada" "workloadb" "workloadc" "workloadd" "workloade" "workloadf")
