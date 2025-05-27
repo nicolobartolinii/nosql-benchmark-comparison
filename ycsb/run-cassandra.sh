@@ -78,7 +78,7 @@ execute_cql_or_exit() {
             echo "WARN [${DB_NAME}]: Failure ignored as requested for ${description}."
         fi
     fi
-    return ${exit_code}
+    return ${exit_code} 
 }
 # --- Fine funzione ---
 
@@ -119,31 +119,31 @@ LOAD_OUTPUT_FILE="${OUTPUT_DIR}/load_rep${REP_NUM}_${GENERATED_TIMESTAMP}.txt"
 echo "INFO [${DB_NAME}]: Esecuzione LOAD. Output: ${LOAD_OUTPUT_FILE}"
 "${YCSB_PATH}" load cassandra-cql -s -threads "${THREADS}" \
     -P "${WORKLOAD_PATH_PREFIX}${WORKLOAD_NAME}" \
-    -p hosts="${CASS_HOSTS}" \
+            -p hosts="${CASS_HOSTS}" \
     -p recordcount="${RECORD_COUNT}" \
     -p operationcount="${OPERATION_COUNT}" \
     -p fieldcount="${FIELD_COUNT}" \
     -p fieldlength="${FIELD_LENGTH}" \
     -p readallfields="${READ_ALL_FIELDS_BOOL}" \
-    -p cassandra.batchsize=${CASSANDRA_BATCH_SIZE} \
+            -p cassandra.batchsize=${CASSANDRA_BATCH_SIZE} \
     -p cassandra.keyspace="${KEYSPACE_NAME}" \
     -p cassandra.table="${TABLE_NAME}" \
     -p cassandra.readconsistencylevel="${READ_CONSISTENCY}" \
     -p cassandra.writeconsistencylevel="${WRITE_CONSISTENCY}" \
-    > "${LOAD_OUTPUT_FILE}" 2>&1
+            > "${LOAD_OUTPUT_FILE}" 2>&1
 
-if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
+        if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
     echo "ERROR [${DB_NAME}]: LOAD fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}, Threads ${THREADS}. Vedi ${LOAD_OUTPUT_FILE}"
     tail -n 30 "${LOAD_OUTPUT_FILE}" # Show more lines for Cassandra errors
-fi
-echo "INFO [${DB_NAME}]: LOAD completato."
+        fi
+        echo "INFO [${DB_NAME}]: LOAD completato."
 
 # --- YCSB Run Phase ---
 RUN_OUTPUT_FILE="${OUTPUT_DIR}/run_rep${REP_NUM}_${GENERATED_TIMESTAMP}.txt"
 echo "INFO [${DB_NAME}]: Esecuzione RUN. Output: ${RUN_OUTPUT_FILE}"
 "${YCSB_PATH}" run cassandra-cql -s -threads "${THREADS}" \
     -P "${WORKLOAD_PATH_PREFIX}${WORKLOAD_NAME}" \
-    -p hosts="${CASS_HOSTS}" \
+            -p hosts="${CASS_HOSTS}" \
     -p recordcount="${RECORD_COUNT}" \
     -p operationcount="${OPERATION_COUNT}" \
     -p fieldcount="${FIELD_COUNT}" \
@@ -153,11 +153,11 @@ echo "INFO [${DB_NAME}]: Esecuzione RUN. Output: ${RUN_OUTPUT_FILE}"
     -p cassandra.table="${TABLE_NAME}" \
     -p cassandra.readconsistencylevel="${READ_CONSISTENCY}" \
     -p cassandra.writeconsistencylevel="${WRITE_CONSISTENCY}" \
-    > "${RUN_OUTPUT_FILE}" 2>&1
+            > "${RUN_OUTPUT_FILE}" 2>&1
 
-if ! grep -q "\[OVERALL\], RunTime(ms)" "${RUN_OUTPUT_FILE}"; then
+        if ! grep -q "\[OVERALL\], RunTime(ms)" "${RUN_OUTPUT_FILE}"; then
     echo "ERROR [${DB_NAME}]: RUN fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}, Threads ${THREADS}. Vedi ${RUN_OUTPUT_FILE}"
-fi
-echo "INFO [${DB_NAME}]: RUN completato."
+        fi
+        echo "INFO [${DB_NAME}]: RUN completato."
 
 echo "INFO [${DB_NAME}]: Test run ${WORKLOAD_NAME}, Rep ${REP_NUM}, Threads ${THREADS} completato."

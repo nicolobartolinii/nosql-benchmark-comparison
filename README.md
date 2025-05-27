@@ -120,7 +120,7 @@ Batch size specifici per database:
 ```bash
 chmod +x run_mongo_benchmarks.sh
 # Esegue tutti e 7 gli scenari:
-./run_mongo_benchmarks.sh 
+./run_mongo_benchmarks.sh
 # Esegue scenari specifici (es. 1, 6 e 7):
 ./run_mongo_benchmarks.sh 1 6 7
 ```
