@@ -13,7 +13,7 @@ SUMMARY_PLOT_DIR = os.path.join(BASE_PLOT_DIR, "summary")
 
 # --- Descriptive Mappings ---
 USER_CPU_MAP = {
-    'nicolo': 'Nicolò (Apple M2 Pro)',
+    'nick': 'Nicolò (Apple M2 Pro)',
     'nicola': 'Nicola (Intel Core i9 13th Gen)',
     'andrea': 'Andrea (Apple M1 Pro)'
 }
@@ -129,6 +129,7 @@ def discover_and_parse_results():
     if not os.path.exists(BASE_RESULTS_DIR): return pd.DataFrame()
     for user_dir in os.listdir(BASE_RESULTS_DIR):
         user_path = os.path.join(BASE_RESULTS_DIR, user_dir)
+        if user_dir.lower() not in USER_CPU_MAP.keys(): continue
         if not os.path.isdir(user_path) or user_dir.startswith('.'): continue
         user_name_norm = user_dir.lower().replace('ò', 'o').replace(' ', '_')
         for db_dir in os.listdir(user_path):
