@@ -1,0 +1,50 @@
+[WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
+[DEBUG]  Running 'mvn -pl site.ycsb:redis-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
+/opt/java/openjdk/bin/java -cp /opt/YCSB_PROJECT_ROOT/redis/conf:/opt/YCSB_PROJECT_ROOT/redis/target/redis-binding-0.17.0.jar:/root/.m2/repository/org/apache/htrace/htrace-core4/4.1.0-incubating/htrace-core4-4.1.0-incubating.jar:/opt/YCSB_PROJECT_ROOT/core/target/core-0.17.0.jar:/root/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/root/.m2/repository/redis/clients/jedis/2.9.0/jedis-2.9.0.jar:/root/.m2/repository/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar:/root/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar site.ycsb.Client -db site.ycsb.db.RedisClient -s -threads 1 -P workloads/workloadd -p redis.hosts=redis-node1:6379,redis-node2:6379,redis-node3:6379 -p redis.cluster=true -p recordcount=10000 -p operationcount=10000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -t
+Command line: -db site.ycsb.db.RedisClient -s -threads 1 -P workloads/workloadd -p redis.hosts=redis-node1:6379,redis-node2:6379,redis-node3:6379 -p redis.cluster=true -p recordcount=10000 -p operationcount=10000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -t
+YCSB Client 0.17.0
+
+Loading workload...
+Starting test.
+INFO: Modalità Cluster Redis abilitata.
+INFO: Parsing host Redis: redis-node1:6379,redis-node2:6379,redis-node3:6379
+DEBUG: Aggiungo nodo al cluster: redis-node1:6379
+DEBUG: Aggiungo nodo al cluster: redis-node2:6379
+DEBUG: Aggiungo nodo al cluster: redis-node3:6379
+INFO: Creo JedisCluster con nodi: [redis-node1:6379, redis-node2:6379, redis-node3:6379], timeout=2000, maxAttempts=5
+2025-05-27 09:53:33:126 0 sec: 0 operations; est completion in 0 second 
+INFO: RedisClient inizializzato correttamente.
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+INFO: Connessione Redis chiusa.
+2025-05-27 09:53:33:773 0 sec: 10000 operations; 15128.59 current ops/sec; [READ: Count=9523, Max=3405, Min=24, Avg=55.45, 90=64, 99=104, 99.9=161, 99.99=2773] [CLEANUP: Count=1, Max=927, Min=927, Avg=927, 90=927, 99=927, 99.9=927, 99.99=927] [INSERT: Count=477, Max=520, Min=33, Avg=73.45, 90=106, 99=156, 99.9=520, 99.99=520] 
+[OVERALL], RunTime(ms), 662
+[OVERALL], Throughput(ops/sec), 15105.740181268882
+[TOTAL_GCS_G1_Young_Generation], Count, 2
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 2
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.3021148036253776
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 2
+[TOTAL_GC_TIME], Time(ms), 2
+[TOTAL_GC_TIME_%], Time(%), 0.3021148036253776
+[READ], Operations, 9523
+[READ], AverageLatency(us), 55.44649795232595
+[READ], MinLatency(us), 24
+[READ], MaxLatency(us), 3405
+[READ], 95thPercentileLatency(us), 74
+[READ], 99thPercentileLatency(us), 104
+[READ], Return=OK, 9523
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 927.0
+[CLEANUP], MinLatency(us), 927
+[CLEANUP], MaxLatency(us), 927
+[CLEANUP], 95thPercentileLatency(us), 927
+[CLEANUP], 99thPercentileLatency(us), 927
+[INSERT], Operations, 477
+[INSERT], AverageLatency(us), 73.45492662473795
+[INSERT], MinLatency(us), 33
+[INSERT], MaxLatency(us), 520
+[INSERT], 95thPercentileLatency(us), 123
+[INSERT], 99thPercentileLatency(us), 156
+[INSERT], Return=OK, 477
