@@ -1,0 +1,61 @@
+[WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
+[DEBUG]  Running 'mvn -pl site.ycsb:mongodb-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
+/opt/java/openjdk/bin/java -cp /opt/YCSB_PROJECT_ROOT/mongodb/conf:/opt/YCSB_PROJECT_ROOT/mongodb/target/mongodb-binding-0.17.0.jar:/root/.m2/repository/org/mongodb/mongo-java-driver/3.8.0/mongo-java-driver-3.8.0.jar:/root/.m2/repository/org/apache/htrace/htrace-core4/4.1.0-incubating/htrace-core4-4.1.0-incubating.jar:/opt/YCSB_PROJECT_ROOT/core/target/core-0.17.0.jar:/root/.m2/repository/org/xerial/snappy/snappy-java/1.1.7.1/snappy-java-1.1.7.1.jar:/root/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/root/.m2/repository/com/allanbank/mongodb-async-driver/2.0.1/mongodb-async-driver-2.0.1.jar site.ycsb.Client -db site.ycsb.db.MongoDbClient -s -threads 1 -P workloads/workloadf -p recordcount=10000 -p operationcount=10000 -p fieldcount=1 -p fieldlength=1000 -p readallfields=true -p mongodb.url=mongodb://mongo-mongos:27017/ycsb?w=1 -t
+Command line: -db site.ycsb.db.MongoDbClient -s -threads 1 -P workloads/workloadf -p recordcount=10000 -p operationcount=10000 -p fieldcount=1 -p fieldlength=1000 -p readallfields=true -p mongodb.url=mongodb://mongo-mongos:27017/ycsb?w=1 -t
+YCSB Client 0.17.0
+
+Loading workload...
+Starting test.
+2025-05-27 16:24:35:511 0 sec: 0 operations; est completion in 0 second 
+May 27, 2025 4:24:35 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster created with settings {hosts=[mongo-mongos:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+mongo client connection created with mongodb://mongo-mongos:27017/ycsb?w=1
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+May 27, 2025 4:24:35 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster description not yet available. Waiting for 30000 ms before timing out
+May 27, 2025 4:24:35 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:1}] to mongo-mongos:27017
+May 27, 2025 4:24:35 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Monitor thread successfully connected to server with description ServerDescription{address=mongo-mongos:27017, type=SHARD_ROUTER, state=CONNECTED, ok=true, version=ServerVersion{versionList=[7, 0, 20]}, minWireVersion=0, maxWireVersion=21, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1373583}
+May 27, 2025 4:24:35 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:2}] to mongo-mongos:27017
+May 27, 2025 4:24:41 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Closed connection [connectionId{localValue:2}] to mongo-mongos:27017 because the pool has been closed.
+2025-05-27 16:24:41:918 6 sec: 10000 operations; 1555.45 current ops/sec; [READ: Count=10000, Max=57375, Min=128, Avg=383.28, 90=536, 99=1461, 99.9=3773, 99.99=44735] [READ-MODIFY-WRITE: Count=5021, Max=62431, Min=344, Avg=857.12, 90=1190, 99=3089, 99.9=8599, 99.99=58751] [CLEANUP: Count=1, Max=16415, Min=16400, Avg=16408, 90=16415, 99=16415, 99.9=16415, 99.99=16415] [UPDATE: Count=5021, Max=11663, Min=193, Avg=457.59, 90=649, 99=1527, 99.9=4247, 99.99=7959] 
+[OVERALL], RunTime(ms), 6429
+[OVERALL], Throughput(ops/sec), 1555.4518587649711
+[TOTAL_GCS_G1_Young_Generation], Count, 5
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 13
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.20220874163944624
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 5
+[TOTAL_GC_TIME], Time(ms), 13
+[TOTAL_GC_TIME_%], Time(%), 0.20220874163944624
+[READ], Operations, 10000
+[READ], AverageLatency(us), 383.2805
+[READ], MinLatency(us), 128
+[READ], MaxLatency(us), 57375
+[READ], 95thPercentileLatency(us), 725
+[READ], 99thPercentileLatency(us), 1461
+[READ], Return=OK, 10000
+[READ-MODIFY-WRITE], Operations, 5021
+[READ-MODIFY-WRITE], AverageLatency(us), 857.1214897430791
+[READ-MODIFY-WRITE], MinLatency(us), 344
+[READ-MODIFY-WRITE], MaxLatency(us), 62431
+[READ-MODIFY-WRITE], 95thPercentileLatency(us), 1585
+[READ-MODIFY-WRITE], 99thPercentileLatency(us), 3089
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 16408.0
+[CLEANUP], MinLatency(us), 16400
+[CLEANUP], MaxLatency(us), 16415
+[CLEANUP], 95thPercentileLatency(us), 16415
+[CLEANUP], 99thPercentileLatency(us), 16415
+[UPDATE], Operations, 5021
+[UPDATE], AverageLatency(us), 457.5865365465047
+[UPDATE], MinLatency(us), 193
+[UPDATE], MaxLatency(us), 11663
+[UPDATE], 95thPercentileLatency(us), 846
+[UPDATE], 99thPercentileLatency(us), 1527
+[UPDATE], Return=OK, 5021

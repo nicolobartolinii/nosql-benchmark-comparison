@@ -1,0 +1,56 @@
+[WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
+[DEBUG]  Running 'mvn -pl site.ycsb:mongodb-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
+/opt/java/openjdk/bin/java -cp /opt/YCSB_PROJECT_ROOT/mongodb/conf:/opt/YCSB_PROJECT_ROOT/mongodb/target/mongodb-binding-0.17.0.jar:/root/.m2/repository/org/mongodb/mongo-java-driver/3.8.0/mongo-java-driver-3.8.0.jar:/root/.m2/repository/org/apache/htrace/htrace-core4/4.1.0-incubating/htrace-core4-4.1.0-incubating.jar:/opt/YCSB_PROJECT_ROOT/core/target/core-0.17.0.jar:/root/.m2/repository/org/xerial/snappy/snappy-java/1.1.7.1/snappy-java-1.1.7.1.jar:/root/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/root/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/root/.m2/repository/com/allanbank/mongodb-async-driver/2.0.1/mongodb-async-driver-2.0.1.jar site.ycsb.Client -db site.ycsb.db.MongoDbClient -s -threads 1 -P workloads/workloade -p recordcount=250000 -p operationcount=10000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p mongodb.url=mongodb://mongo-mongos:27017/ycsb?w=1 -p mongodb.batchsize=500 -load
+Command line: -db site.ycsb.db.MongoDbClient -s -threads 1 -P workloads/workloade -p recordcount=250000 -p operationcount=10000 -p fieldcount=10 -p fieldlength=100 -p readallfields=true -p mongodb.url=mongodb://mongo-mongos:27017/ycsb?w=1 -p mongodb.batchsize=500 -load
+YCSB Client 0.17.0
+
+Loading workload...
+Starting test.
+2025-05-27 16:07:07:197 0 sec: 0 operations; est completion in 0 second 
+May 27, 2025 4:07:07 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster created with settings {hosts=[mongo-mongos:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+mongo client connection created with mongodb://mongo-mongos:27017/ycsb?w=1
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+May 27, 2025 4:07:07 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Cluster description not yet available. Waiting for 30000 ms before timing out
+May 27, 2025 4:07:07 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:1}] to mongo-mongos:27017
+May 27, 2025 4:07:07 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Monitor thread successfully connected to server with description ServerDescription{address=mongo-mongos:27017, type=SHARD_ROUTER, state=CONNECTED, ok=true, version=ServerVersion{versionList=[7, 0, 20]}, minWireVersion=0, maxWireVersion=21, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1075167}
+May 27, 2025 4:07:07 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Opened connection [connectionId{localValue:2}] to mongo-mongos:27017
+2025-05-27 16:07:17:188 10 sec: 29449 operations; 2944.9 current ops/sec; est completion in 1 minute [INSERT: Count=29474, Max=52319, Min=146, Avg=331.75, 90=401, 99=738, 99.9=1756, 99.99=3661] 
+2025-05-27 16:07:27:185 20 sec: 59837 operations; 3038.8 current ops/sec; est completion in 1 minute [INSERT: Count=30369, Max=32927, Min=155, Avg=326.3, 90=392, 99=732, 99.9=2047, 99.99=4815] 
+2025-05-27 16:07:37:187 30 sec: 88336 operations; 2849.33 current ops/sec; est completion in 55 seconds [INSERT: Count=28499, Max=119935, Min=135, Avg=348.41, 90=414, 99=916, 99.9=3051, 99.99=18783] 
+2025-05-27 16:07:47:186 40 sec: 117347 operations; 2901.39 current ops/sec; est completion in 46 seconds [INSERT: Count=29011, Max=14927, Min=138, Avg=341.1, 90=391, 99=1277, 99.9=4375, 99.99=11631] 
+2025-05-27 16:07:57:189 50 sec: 144081 operations; 2672.87 current ops/sec; est completion in 37 seconds [INSERT: Count=26736, Max=24399, Min=137, Avg=371.72, 90=462, 99=1552, 99.9=6739, 99.99=17071] 
+2025-05-27 16:08:07:186 60 sec: 169979 operations; 2590.32 current ops/sec; est completion in 29 seconds [INSERT: Count=25897, Max=551423, Min=156, Avg=383.55, 90=434, 99=1022, 99.9=4319, 99.99=10023] 
+2025-05-27 16:08:17:185 70 sec: 197145 operations; 2716.6 current ops/sec; est completion in 19 seconds [INSERT: Count=27164, Max=254975, Min=163, Avg=365.19, 90=431, 99=1231, 99.9=3961, 99.99=23983] 
+2025-05-27 16:08:27:183 79 sec: 226194 operations; 2905.48 current ops/sec; est completion in 9 second [INSERT: Count=29049, Max=41087, Min=136, Avg=342.07, 90=406, 99=1157, 99.9=5723, 99.99=10735] 
+May 27, 2025 4:08:36 PM com.mongodb.diagnostics.logging.JULLogger log
+INFO: Closed connection [connectionId{localValue:2}] to mongo-mongos:27017 because the pool has been closed.
+2025-05-27 16:08:36:828 89 sec: 250000 operations; 2468.22 current ops/sec; [CLEANUP: Count=1, Max=241151, Min=241024, Avg=241088, 90=241151, 99=241151, 99.9=241151, 99.99=241151] [INSERT: Count=23801, Max=82175, Min=134, Avg=391.48, 90=479, 99=1744, 99.9=7679, 99.99=15167] 
+[OVERALL], RunTime(ms), 89650
+[OVERALL], Throughput(ops/sec), 2788.622420524261
+[TOTAL_GCS_G1_Young_Generation], Count, 40
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 95
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.10596765197992192
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 40
+[TOTAL_GC_TIME], Time(ms), 95
+[TOTAL_GC_TIME_%], Time(%), 0.10596765197992192
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 241088.0
+[CLEANUP], MinLatency(us), 241024
+[CLEANUP], MaxLatency(us), 241151
+[CLEANUP], 95thPercentileLatency(us), 241151
+[CLEANUP], 99thPercentileLatency(us), 241151
+[INSERT], Operations, 250000
+[INSERT], AverageLatency(us), 354.231324
+[INSERT], MinLatency(us), 134
+[INSERT], MaxLatency(us), 551423
+[INSERT], 95thPercentileLatency(us), 519
+[INSERT], 99thPercentileLatency(us), 1143
+[INSERT], Return=OK, 250000
