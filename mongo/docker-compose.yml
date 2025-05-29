@@ -1,15 +1,14 @@
-# mongo/docker-compose.yml (Revisione 1)
+# mongo/docker-compose.yml
 services:
-  # Config Servers Replica Set (cfgRS)
   mongo-cfg1:
-    image: mongo:7.0 # Pinnata versione
-    container_name: mongo-cfg1 # Nome fisso
+    image: mongo:7.0
+    container_name: mongo-cfg1
     command: ["mongod", "--configsvr", "--replSet", "cfgRS", "--port", "27019", "--bind_ip_all"]
     networks:
       - mongo-net
-      - shared-net # Decommenta se usi rete esterna
+      - shared-net
     volumes:
-      - mongo-cfg1-data:/data/configdb # Volume per dati config server
+      - mongo-cfg1-data:/data/configdb
     restart: always
 
   mongo-cfg2:
@@ -34,7 +33,6 @@ services:
       - mongo-cfg3-data:/data/configdb
     restart: always
 
-  # Shard Replica Set (shard1RS)
   mongo-shard1a:
     image: mongo:7.0
     container_name: mongo-shard1a
@@ -43,7 +41,7 @@ services:
       - mongo-net
       - shared-net
     volumes:
-      - mongo-shard1a-data:/data/db # Volume per dati shard
+      - mongo-shard1a-data:/data/db
     restart: always
 
   mongo-shard1b:
@@ -68,19 +66,18 @@ services:
       - mongo-shard1c-data:/data/db
     restart: always
 
-  # Mongos Router
   mongo-mongos:
     image: mongo:7.0
     container_name: mongo-mongos
-    command: > # Comando multi-linea per leggibilità
+    command: >
       mongos --configdb cfgRS/mongo-cfg1:27019,mongo-cfg2:27019,mongo-cfg3:27019
       --bind_ip_all
     ports:
-      - "27017:27017" # Porta esposta all'host
+      - "27017:27017"
     networks:
       - mongo-net
       - shared-net
-    depends_on: # Attende avvio (non prontezza) dei nodi
+    depends_on:
       - mongo-cfg1
       - mongo-cfg2
       - mongo-cfg3
@@ -89,7 +86,6 @@ services:
       - mongo-shard1c
     restart: always
 
-# Volumi nominati per persistere i dati
 volumes:
   mongo-cfg1-data:
   mongo-cfg2-data:
@@ -98,9 +94,8 @@ volumes:
   mongo-shard1b-data:
   mongo-shard1c-data:
 
-# Rete interna per la comunicazione tra i container MongoDB
 networks:
   mongo-net:
     driver: bridge
-  shared-net: # Definisci se usi rete esterna condivisa con YCSB
-    external: true # Assumendo che 'shared-net' sia stata creata manualmente
+  shared-net:
+    external: true

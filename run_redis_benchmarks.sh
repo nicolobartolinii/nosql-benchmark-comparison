@@ -1,28 +1,25 @@
 #!/bin/bash
 set -euo pipefail
 
-# --- Configurazione ---
 REDIS_SETUP_DIR="redis"
 YCSB_IMAGE_NAME="nosql-benchmark/ycsb"
 YCSB_REDIS_SCRIPT_PATH_IN_CONTAINER="./run-redis.sh"
 DOCKER_NETWORK="shared-net"
-DB_USER_SUBDIR="nick" # Your user-specific results subdirectory
+DB_USER_SUBDIR="nick"
 
-# Default YCSB workloads
 DEFAULT_WORKLOADS=("workloada" "workloadb" "workloadc" "workloadd" "workloade" "workloadf")
 REPETITIONS=3
-# --- Fine Configurazione ---
 
 function start_redis_cluster() {
     echo "INFO: Avvio cluster Redis da ${REDIS_SETUP_DIR}..."
     cd "${REDIS_SETUP_DIR}"
-    docker compose up -d --remove-orphans # Ensure clean start
+    docker compose up -d --remove-orphans
     cd ..
 
     echo "INFO: Attesa iniziale di 20 secondi per l'avvio dei nodi Redis e il job di setup del cluster..."
     sleep 20 
 
-    MAX_RETRIES=6 # Max 6 tentativi (6 * 15s = 90 secondi max)
+    MAX_RETRIES=6
     RETRY_COUNT=0
     CLUSTER_OK=false
 
@@ -32,7 +29,6 @@ function start_redis_cluster() {
         echo "INFO: Verifica stato cluster Redis (Tentativo ${RETRY_COUNT}/${MAX_RETRIES})..."
         
         local cluster_state
-        # Verifica che redis-node1 sia in esecuzione prima di tentare redis-cli
         if docker ps --filter "name=redis-node1" --filter "status=running" --format "{{.Names}}" | grep -q "redis-node1"; then
             cluster_state=$(docker exec redis-node1 redis-cli -c cluster info 2>/dev/null | grep 'cluster_state:ok' || true)
         else
@@ -42,13 +38,12 @@ function start_redis_cluster() {
 
         if [[ -n "${cluster_state}" ]]; then
             echo "INFO: Cluster Redis OK (cluster_state:ok)."
-            # Controllo aggiuntivo per gli slot assegnati
             local slots_assigned
             slots_assigned=$(docker exec redis-node1 redis-cli -c cluster info 2>/dev/null | grep 'cluster_slots_assigned:16384' || true)
             if [[ -n "${slots_assigned}" ]]; then
                 echo "INFO: Tutti e 16384 gli slot sono assegnati."
-            CLUSTER_OK=true
-                docker exec redis-node1 redis-cli -c cluster nodes || true # Stampa nodi per info
+                CLUSTER_OK=true
+                docker exec redis-node1 redis-cli -c cluster nodes || true
             else
                 echo "WARN: Cluster Redis OK ma slot non completamente assegnati. Attendo..."
                 sleep 15
@@ -67,7 +62,6 @@ function start_redis_cluster() {
             echo "ERROR: Container redis-node1 non raggiungibile per status finale."
         fi
         echo "WARN: Lo script continuerà, ma i benchmark potrebbero fallire o essere inaccurati."
-        # exit 1
     else
         echo "INFO: Cluster Redis pronto e stabile."
     fi
@@ -88,14 +82,13 @@ function run_ycsb_tests_redis() {
     mkdir -p "$(pwd)/results/${DB_USER_SUBDIR}"
 
     declare -a SCENARIOS_DEF
-    # Params: RC OC FC FL RAF THREADS
-    SCENARIOS_DEF[0]="10000 10000 10 100 true 1"    # S1
-    SCENARIOS_DEF[1]="100000 10000 10 100 true 1"   # S2
-    SCENARIOS_DEF[2]="250000 10000 10 100 true 1"   # S3
-    SCENARIOS_DEF[3]="10000 10000 1 1000 true 1"   # S4
-    SCENARIOS_DEF[4]="10000 10000 10 100 false 1"  # S5
-    SCENARIOS_DEF[5]="10000 10000 10 100 true 8"    # S6 (S1 @ 8 Threads)
-    SCENARIOS_DEF[6]="250000 10000 10 100 true 8"   # S7 (S3 @ 8 Threads)
+    SCENARIOS_DEF[0]="10000 10000 10 100 true 1"
+    SCENARIOS_DEF[1]="100000 10000 10 100 true 1"
+    SCENARIOS_DEF[2]="250000 10000 10 100 true 1"
+    SCENARIOS_DEF[3]="10000 10000 1 1000 true 1"
+    SCENARIOS_DEF[4]="10000 10000 10 100 false 1"
+    SCENARIOS_DEF[5]="10000 10000 10 100 true 8"
+    SCENARIOS_DEF[6]="250000 10000 10 100 true 8"
 
     declare -a scenario_indices_to_run
     if [ "$#" -eq 0 ]; then

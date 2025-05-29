@@ -1,18 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-# --- Configurazione ---
 MONGO_SETUP_DIR="mongo"
 YCSB_IMAGE_NAME="nosql-benchmark/ycsb"
 YCSB_MONGO_SCRIPT_PATH_IN_CONTAINER="./run-mongo.sh"
 DOCKER_NETWORK="shared-net"
-DB_USER_SUBDIR="nick" # Your user-specific results subdirectory
+DB_USER_SUBDIR="nick"
 
-# Default YCSB workloads
 DEFAULT_WORKLOADS=("workloada" "workloadb" "workloadc" "workloadd" "workloade" "workloadf")
 REPETITIONS=3
-
-# --- Fine Configurazione ---
 
 function start_mongo_cluster() {
     echo "INFO: Avvio cluster MongoDB da ${MONGO_SETUP_DIR}..."
@@ -21,9 +17,8 @@ function start_mongo_cluster() {
     cd ..
 
     echo "INFO: Attesa di 35 secondi per la stabilizzazione e l'avvio del cluster MongoDB..."
-    sleep 35 # Aumenta se necessario
+    sleep 35
 
-    # Tentativi di inizializzazione, più tolleranti agli errori "already initialized"
     echo "INFO: Tentativo di inizializzazione Config Server Replica Set (cfgRS)..."
     docker exec -it mongo-cfg1 mongosh --quiet --port 27019 --eval 'try { rs.initiate({_id:"cfgRS",configsvr:true,members:[{_id:0,host:"mongo-cfg1:27019"},{_id:1,host:"mongo-cfg2:27019"},{_id:2,host:"mongo-cfg3:27019"}]}) } catch (e) { if (e.codeName && e.codeName.toLowerCase().includes("alreadyinitialized")) { print("INFO: cfgRS già inizializzato."); } else { throw e; } }'
     sleep 10
@@ -58,14 +53,13 @@ function run_ycsb_tests() {
     mkdir -p "$(pwd)/results/${DB_USER_SUBDIR}"
 
     declare -a SCENARIOS_DEF
-    # Params: RC OC FC FL RAF THREADS
-    SCENARIOS_DEF[0]="10000 10000 10 100 true 1"    # S1: Baseline, 1 Thread
-    SCENARIOS_DEF[1]="100000 10000 10 100 true 1"   # S2: Dataset Medio (100k RC), 1 Thread
-    SCENARIOS_DEF[2]="250000 10000 10 100 true 1"   # S3: Dataset Grande (250k RC), 1 Thread
-    SCENARIOS_DEF[3]="10000 10000 1 1000 true 1"   # S4: Campo Singolo Grande, 1 Thread
-    SCENARIOS_DEF[4]="10000 10000 10 100 false 1"  # S5: Lettura Selettiva, 1 Thread
-    SCENARIOS_DEF[5]="10000 10000 10 100 true 8"    # S6: S1 with 8 Threads
-    SCENARIOS_DEF[6]="250000 10000 10 100 true 8"   # S7: S3 with 8 Threads
+    SCENARIOS_DEF[0]="10000 10000 10 100 true 1"
+    SCENARIOS_DEF[1]="100000 10000 10 100 true 1"
+    SCENARIOS_DEF[2]="250000 10000 10 100 true 1"
+    SCENARIOS_DEF[3]="10000 10000 1 1000 true 1"
+    SCENARIOS_DEF[4]="10000 10000 10 100 false 1"
+    SCENARIOS_DEF[5]="10000 10000 10 100 true 8"
+    SCENARIOS_DEF[6]="250000 10000 10 100 true 8"
 
     declare -a scenario_indices_to_run
     if [ "$#" -eq 0 ]; then
@@ -73,7 +67,6 @@ function run_ycsb_tests() {
         echo "INFO: Nessuno scenario specificato, esecuzione di tutti gli scenari (1-${#SCENARIOS_DEF[@]})."
     else
         for user_scenario_num_arg in "$@"; do
-            # Assuming scenario numbers are 1-7 now
             if ! [[ "${user_scenario_num_arg}" =~ ^[1-7]$ ]]; then
                 echo "WARN: Numero di scenario '${user_scenario_num_arg}' non valido (deve essere tra 1 e ${#SCENARIOS_DEF[@]}). Verrà ignorato."
                 continue
@@ -123,8 +116,6 @@ function run_ycsb_tests() {
         echo "ERROR: Logica interna ha portato a nessun scenario selezionato nonostante gli argomenti. Uscita."
         exit 1
     elif [ "$num_selected_indices" -eq 0 ] && [ "$#" -eq 0 ]; then
-         # If SCENARIOS_DEF was empty and no args, this would hit. But SCENARIOS_DEF is not empty.
-         # If it was, this would mean "run all" results in zero actual scenarios.
         echo "INFO: Nessuno scenario definito per l'esecuzione (caso 'tutti gli scenari')."
     fi
 
@@ -172,10 +163,8 @@ function run_ycsb_tests() {
     echo "INFO: Tutti i test YCSB per MongoDB completati. Controlla la directory 'results/${DB_USER_SUBDIR}'."
 }
 
-# Trap per assicurare la pulizia anche in caso di errore o interruzione
 trap 'echo "WARN: Script interrotto. Tentativo di pulizia finale..."; stop_mongo_cluster' EXIT SIGINT SIGTERM
 
-# --- Flusso Principale ---
 echo "INFO: Pulizia preliminare di qualsiasi istanza MongoDB precedente..."
 stop_mongo_cluster 
 sleep 5
@@ -186,7 +175,6 @@ docker network inspect "${DOCKER_NETWORK}" >/dev/null 2>&1 || {
 }
 
 start_mongo_cluster
-# Pass script arguments ($@) to the test function to select scenarios
 run_ycsb_tests "$@"
 
 echo "INFO: Esecuzione benchmark MongoDB completata."

@@ -1,26 +1,25 @@
-# cassandra/docker-compose.yml (Revisione basata sul file trovato)
+# cassandra/docker-compose.yml
 networks:
-  cassandra-net: # Rete interna per comunicazione tra nodi Cassandra
+  cassandra-net:
     driver: bridge
-  shared-net: # Rete esterna per comunicazione con YCSB
+  shared-net:
     external: true
 
 services:
   cassandra-1:
     image: "cassandra:4.1"
     container_name: "cassandra-1"
-    hostname: "cassandra-1" # Aggiunto per coerenza
+    hostname: "cassandra-1"
     ports:
-      # - 7000:7000 # Opzionale, non strettamente necessario esporlo all'host
-      - 9042:9042 # Mantenuto per debug da host se necessario
+      - 9042:9042
     networks:
       - cassandra-net
-      - shared-net # Aggiunta rete condivisa
+      - shared-net
     environment:
-      - CASSANDRA_CLUSTER_NAME=nosql-benchmark-cluster # Nome cluster aggiornato
-      - CASSANDRA_SEEDS=cassandra-1,cassandra-2 # Aggiornato per usare 2 seed (sé stesso e il 2)
-      - CASSANDRA_DC=dc1 # Nome DC arbitrario, coerente
-      - CASSANDRA_RACK=rack1 # Nome Rack arbitrario, coerente
+      - CASSANDRA_CLUSTER_NAME=nosql-benchmark-cluster
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
       - CASSANDRA_LISTEN_ADDRESS=auto
       - CASSANDRA_RPC_ADDRESS=0.0.0.0
@@ -29,23 +28,21 @@ services:
     restart: on-failure
     healthcheck:
       test: ["CMD-SHELL", "nodetool status"]
-      interval: 1m # Ridotto intervallo healthcheck per reattività
+      interval: 1m
       start_period: 2m
-      timeout: 30s # Aumentato timeout healthcheck
+      timeout: 30s
       retries: 5
 
   cassandra-2:
     image: "cassandra:4.1"
     container_name: "cassandra-2"
-    hostname: "cassandra-2" # Aggiunto per coerenza
-    # ports: # Rimossa esposizione porta CQL per nodo 2
-    #   - 9043:9042
+    hostname: "cassandra-2"
     networks:
       - cassandra-net
-      - shared-net # Aggiunta rete condivisa
+      - shared-net
     environment:
       - CASSANDRA_CLUSTER_NAME=nosql-benchmark-cluster
-      - CASSANDRA_SEEDS=cassandra-1,cassandra-2 # Aggiornato per usare 2 seed
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2
       - CASSANDRA_DC=dc1
       - CASSANDRA_RACK=rack1
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
@@ -53,7 +50,7 @@ services:
       - CASSANDRA_RPC_ADDRESS=0.0.0.0
     depends_on:
       cassandra-1:
-        condition: service_healthy # Fondamentale!
+        condition: service_healthy
     volumes:
       - cassandra-node-2:/var/lib/cassandra:rw
     restart: on-failure
@@ -67,23 +64,21 @@ services:
   cassandra-3:
     image: "cassandra:4.1"
     container_name: "cassandra-3"
-    hostname: "cassandra-3" # Aggiunto per coerenza
-    # ports: # Rimossa esposizione porta CQL per nodo 3
-    #   - 9044:9042
+    hostname: "cassandra-3"
     networks:
       - cassandra-net
-      - shared-net # Aggiunta rete condivisa
+      - shared-net
     environment:
       - CASSANDRA_CLUSTER_NAME=nosql-benchmark-cluster
-      - CASSANDRA_SEEDS=cassandra-1,cassandra-2 # Aggiornato per usare 2 seed
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2
       - CASSANDRA_DC=dc1
       - CASSANDRA_RACK=rack1
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
       - CASSANDRA_LISTEN_ADDRESS=auto
       - CASSANDRA_RPC_ADDRESS=0.0.0.0
     depends_on:
-      cassandra-2: # Dipende dal nodo 2 che a sua volta dipende dal nodo 1
-        condition: service_healthy # Fondamentale!
+      cassandra-2:
+        condition: service_healthy
     volumes:
       - cassandra-node-3:/var/lib/cassandra:rw
     restart: on-failure

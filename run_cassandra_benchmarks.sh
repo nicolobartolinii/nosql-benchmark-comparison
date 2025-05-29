@@ -1,31 +1,28 @@
 #!/bin/bash
 set -euo pipefail
 
-# --- Configurazione ---
 CASSANDRA_SETUP_DIR="cassandra"
 YCSB_IMAGE_NAME="nosql-benchmark/ycsb"
 YCSB_CASSANDRA_SCRIPT_PATH_IN_CONTAINER="./run-cassandra.sh"
 DOCKER_NETWORK="shared-net"
-DB_USER_SUBDIR="nick" # Your user-specific results subdirectory
+DB_USER_SUBDIR="nick"
 
-# Default YCSB workloads
 DEFAULT_WORKLOADS=("workloada" "workloadb" "workloadc" "workloadd" "workloade" "workloadf")
 REPETITIONS=3
-# --- Fine Configurazione ---
 
 function start_cassandra_cluster() {
     echo "INFO: Avvio cluster Cassandra da ${CASSANDRA_SETUP_DIR}..."
     cd "${CASSANDRA_SETUP_DIR}"
-    docker compose up -d --remove-orphans # Ensure clean start
+    docker compose up -d --remove-orphans
     cd ..
 
     echo "INFO: Attesa iniziale di 60 secondi per l'avvio dei container Cassandra..."
     sleep 60
     
-    MAX_RETRIES=10 # Aumentato a 10 tentativi (10 * 30s = 5 minuti max)
+    MAX_RETRIES=10
     RETRY_COUNT=0
     ALL_NODES_UP=false
-    EXPECTED_NODES=3 # Numero di nodi Cassandra nel cluster
+    EXPECTED_NODES=3
 
     echo "INFO: Inizio verifica stato nodi Cassandra (fino a ${MAX_RETRIES} tentativi)..."
     while [ ${RETRY_COUNT} -lt ${MAX_RETRIES} ] && [ "${ALL_NODES_UP}" = "false" ]; do
@@ -33,10 +30,7 @@ function start_cassandra_cluster() {
         echo "INFO: Verifica stato nodi Cassandra (Tentativo ${RETRY_COUNT}/${MAX_RETRIES})..."
         
         local up_nodes
-        # Esegui nodetool status solo se il container cassandra-1 è in esecuzione
         if docker ps --filter "name=cassandra-1" --filter "status=running" --format "{{.Names}}" | grep -q "cassandra-1"; then
-            # L'output di nodetool status può variare, assicurati che il grep sia robusto
-            # grep -E "^UN\s+" cerca righe che iniziano con UN (Up Normal) seguito da spazi
             up_nodes=$(docker exec cassandra-1 nodetool status 2>/dev/null | grep -E "^UN\s+" | wc -l || echo "0")
         else
             echo "WARN: Container cassandra-1 non è (ancora) in esecuzione. Impossibile eseguire nodetool status."
@@ -54,14 +48,12 @@ function start_cassandra_cluster() {
 
     if [ "${ALL_NODES_UP}" = "false" ]; then
         echo "ERROR: Cluster Cassandra non completamente avviato dopo ${MAX_RETRIES} tentativi. Controllo manuale richiesto."
-        # Mostra lo status corrente se possibile
         if docker ps --filter "name=cassandra-1" --filter "status=running" --format "{{.Names}}" | grep -q "cassandra-1"; then
         docker exec cassandra-1 nodetool status || true
         else
             echo "ERROR: Container cassandra-1 non raggiungibile per status finale."
         fi
         echo "WARN: Lo script continuerà, ma i benchmark potrebbero fallire o essere inaccurati."
-        # exit 1 # Togli commento se preferisci uscire in caso di fallimento avvio cluster
     else
         echo "INFO: Cluster Cassandra pronto e stabile."
     fi
@@ -80,14 +72,13 @@ function run_ycsb_tests_cassandra() {
     mkdir -p "$(pwd)/results/${DB_USER_SUBDIR}"
 
     declare -a SCENARIOS_DEF
-    # Params: RC OC FC FL RAF THREADS
-    SCENARIOS_DEF[0]="10000 10000 10 100 true 1"    # S1
-    SCENARIOS_DEF[1]="100000 10000 10 100 true 1"   # S2
-    SCENARIOS_DEF[2]="250000 10000 10 100 true 1"   # S3
-    SCENARIOS_DEF[3]="10000 10000 1 1000 true 1"   # S4
-    SCENARIOS_DEF[4]="10000 10000 10 100 false 1"  # S5
-    SCENARIOS_DEF[5]="10000 10000 10 100 true 8"    # S6 (S1 @ 8 Threads)
-    SCENARIOS_DEF[6]="250000 10000 10 100 true 8"   # S7 (S3 @ 8 Threads)
+    SCENARIOS_DEF[0]="10000 10000 10 100 true 1"
+    SCENARIOS_DEF[1]="100000 10000 10 100 true 1"
+    SCENARIOS_DEF[2]="250000 10000 10 100 true 1"
+    SCENARIOS_DEF[3]="10000 10000 1 1000 true 1"
+    SCENARIOS_DEF[4]="10000 10000 10 100 false 1"
+    SCENARIOS_DEF[5]="10000 10000 10 100 true 8"
+    SCENARIOS_DEF[6]="250000 10000 10 100 true 8"
 
     declare -a scenario_indices_to_run
     if [ "$#" -eq 0 ]; then

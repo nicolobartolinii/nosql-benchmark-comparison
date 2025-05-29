@@ -541,8 +541,7 @@ def plot_presentation_scenario_scalability_by_db(user_mean_data, user_desc_title
     filename = os.path.join(out_dir, "P3_scenario_scalability_by_db.png")
     fig.savefig(filename, dpi=150); plt.close(fig)
 
-# Modified main to adapt calls
-if __name__ == "__main__":
+def main():
     plt.style.use('seaborn-v0_8-whitegrid') # Apply style once
     print(f"Parsing results, focusing on user: '{TARGET_USER_NORMALIZED}'...")
     
@@ -590,8 +589,6 @@ if __name__ == "__main__":
     
     summary_user_plot_dir = os.path.join(SUMMARY_PLOT_DIR, TARGET_USER_NORMALIZED)
     os.makedirs(summary_user_plot_dir, exist_ok=True)
-    # Removed the nested "presentation" directory for single user summary plots to avoid confusion
-    # os.makedirs(os.path.join(summary_user_plot_dir, "presentation"), exist_ok=True) 
     
     if not mean_run_df.empty:
         print(f"\n--- Generating User-Specific Summary Plots for {user_desc} ---")
@@ -605,7 +602,7 @@ if __name__ == "__main__":
         else: print("Warning: Baseline scenario key for S1 not found in SCENARIO_PARAMS_TO_NAME_MAP.")
 
         plot_aggregated_db_performance(mean_run_df, TARGET_USER_NORMALIZED, user_desc) 
-        plot_scenario_impact_detailed(mean_run_df, TARGET_USER_NORMALIZED) 
+        plot_scenario_impact_detailed(mean_run_df, TARGET_USER_NORMALIZED)
 
         print(f"\n--- Generating New Analysis Plots for {user_desc} (saved in plots/{TARGET_USER_NORMALIZED}/analysis) ---")
         plot_latency_heatmap(mean_run_df, TARGET_USER_NORMALIZED, user_desc)
@@ -614,7 +611,6 @@ if __name__ == "__main__":
         plot_latency_stability_boxplots(run_df, TARGET_USER_NORMALIZED, user_desc)
 
         print(f"\n--- Generating Presentation Plots for {user_desc} (saved in plots/summary/{TARGET_USER_NORMALIZED}/presentation) ---")
-        # Corrected path for presentation plots for single user
         presentation_dir_user = os.path.join(summary_user_plot_dir, "presentation") 
         os.makedirs(presentation_dir_user, exist_ok=True)
         plot_presentation_overall_db_winner(mean_run_df, user_desc, presentation_dir_user)

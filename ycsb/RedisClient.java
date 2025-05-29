@@ -25,7 +25,7 @@
  import site.ycsb.Status;
  import site.ycsb.StringByteIterator;
  
- // import redis.clients.jedis.BasicCommands; // RIMOSSO - Non usato
+ // import redis.clients.jedis.BasicCommands;
  import redis.clients.jedis.HostAndPort;
  import redis.clients.jedis.Jedis;
  import redis.clients.jedis.JedisCluster;

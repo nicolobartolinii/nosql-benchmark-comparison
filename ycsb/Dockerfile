@@ -1,11 +1,9 @@
-# ycsb/Dockerfile
 FROM eclipse-temurin:17-jdk-jammy
 ARG YCSB_TAG=0.17.0
 ARG CASSANDRA_VERSION=4.1.9
 
 WORKDIR /opt
 
-# Installazione dipendenze
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
     git \
@@ -17,7 +15,6 @@ RUN apt-get update \
     lsb-release \
  && rm -rf /var/lib/apt/lists/*
 
-# Installazione di mongodb-mongosh
 RUN wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/mongodb-org-7.0.gpg > /dev/null \
  && UBUNTU_CODENAME=$(lsb_release -cs) \
  && echo "deb [ arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/mongodb-org-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu ${UBUNTU_CODENAME}/mongodb-org/7.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list \
@@ -25,19 +22,15 @@ RUN wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | gpg --dearmor 
  && apt-get install -y mongodb-mongosh \
  && rm -rf /var/lib/apt/lists/*
 
-# --- Installazione di Cassandra ${CASSANDRA_VERSION} per cqlsh ---
-    RUN echo "INFO: Downloading Cassandra ${CASSANDRA_VERSION} for cqlsh..." \
+RUN echo "INFO: Downloading Cassandra ${CASSANDRA_VERSION} for cqlsh..." \
     && CASSANDRA_DOWNLOAD_URL="https://dlcdn.apache.org/cassandra/${CASSANDRA_VERSION}/apache-cassandra-${CASSANDRA_VERSION}-bin.tar.gz" \
     && wget -q "${CASSANDRA_DOWNLOAD_URL}" -O /tmp/cassandra.tar.gz \
     && echo "INFO: Extracting Cassandra..." \
     && tar -xzf /tmp/cassandra.tar.gz -C /opt \
     && mv /opt/apache-cassandra-${CASSANDRA_VERSION} /opt/cassandra \
     && rm /tmp/cassandra.tar.gz
-   # Aggiungi Cassandra bin alla PATH per usare cqlsh direttamente
-   ENV PATH="${PATH}:/opt/cassandra/bin"
-   # --- Fine Installazione Cassandra ---
+ENV PATH="${PATH}:/opt/cassandra/bin"
 
-# 1. Clone YCSB
 RUN set -e; \
     echo "INFO: WORKDIR corrente prima del clone: $(pwd)"; \
     echo "INFO: Cloning YCSB tag: ${YCSB_TAG} in /opt/YCSB_PROJECT_ROOT"; \
@@ -50,26 +43,16 @@ RUN set -e; \
     echo "--- Verifica presenza pom.xml in /opt/YCSB_PROJECT_ROOT ---"; \
     if [ -f /opt/YCSB_PROJECT_ROOT/pom.xml ]; then echo "pom.xml TROVATO in /opt/YCSB_PROJECT_ROOT"; else echo "ERRORE: pom.xml NON TROVATO in /opt/YCSB_PROJECT_ROOT"; exit 1; fi
 
-# 2. Sovrascrivi lo script bin/ycsb con la versione Python 3 corretta
 COPY ycsb_python3.py /opt/YCSB_PROJECT_ROOT/bin/ycsb
 RUN chmod +x /opt/YCSB_PROJECT_ROOT/bin/ycsb
 
-# --- Aggiorna Versione Jedis (ESPERIMENTO) ---
-# RUN echo "INFO: Tentativo di aggiornamento Jedis in redis/pom.xml..." \
-# && sed -i 's|<artifactId>jedis</artifactId>\s*<version>2.9.0</version>|<artifactId>jedis</artifactId><version>3.7.0</version>|g' /opt/YCSB_PROJECT_ROOT/redis/pom.xml \
-# && echo "INFO: Contenuto redis/pom.xml dopo sed (verifica):" \
-# && grep '<artifactId>jedis</artifactId>' /opt/YCSB_PROJECT_ROOT/redis/pom.xml || true
-# --- Fine Aggiornamento Jedis ---
-
 COPY RedisClient.java /opt/YCSB_PROJECT_ROOT/redis/src/main/java/site/ycsb/db/RedisClient.java
 
-# 3. Pulisci la cache Maven, poi COMPILA YCSB
 RUN set -e; \
     rm -rf /root/.m2/repository; \
     echo "INFO: Building YCSB core and specific bindings (mongodb, redis, cassandra)..."; \
     cd /opt/YCSB_PROJECT_ROOT && mvn -q -DskipTests -Dcheckstyle.skip=true clean package -pl core,mongodb,redis,cassandra
 
-# 4. Crea il link simbolico e la directory results
 RUN set -e; \
     ln -s /opt/YCSB_PROJECT_ROOT /ycsb; \
     mkdir /ycsb/results

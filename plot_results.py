@@ -4,23 +4,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
-import numpy as np # For mean/median calculations and inf handling
+import numpy as np
 
-# Define the base directory for results
 BASE_RESULTS_DIR = "results"
-BASE_PLOT_DIR = "plots" # Define where plots are saved
+BASE_PLOT_DIR = "plots"
 SUMMARY_PLOT_DIR = os.path.join(BASE_PLOT_DIR, "summary")
 
-# --- Descriptive Mappings ---
 USER_CPU_MAP = {
     'nick': 'Nicolò (Apple M2 Pro)',
     'nicola': 'Nicola (Intel Core i9 13th Gen)',
     'andrea': 'Andrea (Apple M1 Pro)'
 }
 
-# Updated scenario definitions including threads
 SCENARIO_PARAMS_TO_NAME_MAP = {
-    # (recordcount, operationcount, fieldcount, fieldlength, readallfields, threads): ("Short Name for Legend", "Full Description for Titles")
     (10000, 10000, 10, 100, True, 1):  ("S1: Baseline (1T)", "S1: Baseline (RC10k, OC10k, FC10, FL100, RAF, 1 Thread)"),
     (100000, 10000, 10, 100, True, 1): ("S2: Dataset Medio (1T)", "S2: Dataset Medio (RC100k, OC10k, FC10, FL100, RAF, 1 Thread)"),
     (250000, 10000, 10, 100, True, 1): ("S3: Dataset Grande (1T)", "S3: Dataset Grande (RC250k, OC10k, FC10, FL100, RAF, 1 Thread)"),
@@ -41,20 +37,17 @@ WORKLOAD_DESCRIPTION_MAP = {
 
 DB_ORDER = ['mongo', 'cassandra', 'redis']
 WORKLOAD_ORDER = ['workloada', 'workloadb', 'workloadc', 'workloadd', 'workloade', 'workloadf']
-# Generate SCENARIO_ORDER based on the new map keys to ensure correctness
-# Sort keys by their tuple representation to maintain a logical order for S1-S7
 SORTED_SCENARIO_KEYS = sorted(SCENARIO_PARAMS_TO_NAME_MAP.keys())
 SCENARIO_ORDER = [SCENARIO_PARAMS_TO_NAME_MAP[k][0] for k in SORTED_SCENARIO_KEYS]
 
 
-# Regex to parse scenario parameters from the directory name, now including threads
 SCENARIO_PATTERN = re.compile(
     r"rc(?P<recordcount>\d+)_"
     r"oc(?P<operationcount>\d+)_"
     r"fc(?P<fieldcount>\d+)_"
     r"fl(?P<fieldlength>\d+)_"
     r"raf(?P<readallfields>true|false)_"
-    r"th(?P<threads>\d+)" # Added threads part
+    r"th(?P<threads>\d+)"
 )
 
 FILE_PATTERN = re.compile(
@@ -144,7 +137,6 @@ def discover_and_parse_results():
                     if not os.path.isdir(scenario_path) or scenario_dir_name.startswith('.'): continue
                     scenario_match = SCENARIO_PATTERN.match(scenario_dir_name)
                     if not scenario_match:
-                        # print(f"Warning: Could not parse scenario from dir: {scenario_dir_name} in {workload_path}")
                         continue
                     scenario_params = scenario_match.groupdict()
                     for filename in os.listdir(scenario_path):
@@ -172,10 +164,6 @@ def discover_and_parse_results():
         df['cpu_description'] = df['user'].map(USER_CPU_MAP)
     return df
 
-# --- Plotting Functions (show_values_on_bars, plot_throughput_comparison, etc. remain largely the same but will use updated labels)
-# Minor adjustments might be needed in titles or legend handling if threads are explicitly shown.
-
-# Helper function (already provided, ensure it's in your script)
 def show_values_on_bars(axs, h_v="v", space=0.4, val_format="{:.0f}"):
     for p in axs.patches:
         _x = p.get_x() + p.get_width() / 2
@@ -187,18 +175,14 @@ def show_values_on_bars(axs, h_v="v", space=0.4, val_format="{:.0f}"):
             value = val_format.format(p.get_width())
         axs.text(_x, _y, value, ha="center", va="bottom" if h_v == "v" else "center", fontsize=8, color='dimgray')
 
-# Existing detailed plotting functions will now use the updated SCENARIO_ORDER 
-# and scenario_short_label which includes thread info.
-
 def plot_throughput_comparison(df_to_plot, current_user_id, current_workload_id):
     user_descr = USER_CPU_MAP.get(current_user_id, current_user_id)
     workload_descr = WORKLOAD_DESCRIPTION_MAP.get(current_workload_id, current_workload_id)
     df_to_plot['database'] = pd.Categorical(df_to_plot['database'], categories=DB_ORDER, ordered=True)
-    # Ensure scenario_short_label is categorical for correct ordering in plot
     df_to_plot['scenario_short_label'] = pd.Categorical(df_to_plot['scenario_short_label'], categories=SCENARIO_ORDER, ordered=True)
     df_to_plot = df_to_plot.sort_values('scenario_short_label')
 
-    fig, ax = plt.subplots(figsize=(17, 9)) # Wider for more scenarios
+    fig, ax = plt.subplots(figsize=(17, 9))
     sns.barplot(x='database', y='overall_throughput', hue='scenario_short_label', data=df_to_plot, palette='viridis', dodge=True, ax=ax)
     show_values_on_bars(ax, val_format="{:,.0f}")
     ax.set_ylim(0, df_to_plot['overall_throughput'].max() * 1.20 if not df_to_plot.empty and df_to_plot['overall_throughput'].max() > 0 else 100) 
@@ -206,7 +190,7 @@ def plot_throughput_comparison(df_to_plot, current_user_id, current_workload_id)
     ax.set_ylabel('Mean Overall Throughput (ops/sec)', fontsize=13); ax.set_xlabel('Database', fontsize=13)
     ax.tick_params(axis='x', labelsize=11); ax.tick_params(axis='y', labelsize=11)
     ax.legend(title='Scenario (Threads)', bbox_to_anchor=(1.02, 1), loc='upper left', fontsize=9, title_fontsize=11)
-    ax.grid(True, which='major', linestyle='--', linewidth=0.5); fig.tight_layout(rect=[0, 0, 0.78, 1]) # Adjust rect for wider legend
+    ax.grid(True, which='major', linestyle='--', linewidth=0.5); fig.tight_layout(rect=[0, 0, 0.78, 1])
     user_plot_dir = os.path.join(BASE_PLOT_DIR, current_user_id)
     os.makedirs(user_plot_dir, exist_ok=True)
     filename = os.path.join(user_plot_dir, f"{current_workload_id}_throughput_comparison.png")
@@ -252,7 +236,7 @@ def plot_latency_percentiles(df_to_plot, current_user_id, current_workload_id, c
         current_metric_df['scenario_short_label'] = pd.Categorical(current_metric_df['scenario_short_label'], categories=SCENARIO_ORDER, ordered=True)
         current_metric_df = current_metric_df.sort_values('scenario_short_label')
 
-        fig, ax = plt.subplots(figsize=(13, 7)) # Wider for scenario labels
+        fig, ax = plt.subplots(figsize=(13, 7))
         title_str = f'{metric_name_pretty} Percentiles: {workload_descr}\nUser: {user_descr}, Database: {current_database.capitalize()}'
         lines_plotted = False; max_val = 0
         if avg_col in current_metric_df.columns and current_metric_df[avg_col].notna().any():
@@ -265,7 +249,7 @@ def plot_latency_percentiles(df_to_plot, current_user_id, current_workload_id, c
             sns.lineplot(x='scenario_short_label', y=p99_col, data=current_metric_df, marker='^', label='99th Pctl', linestyle=':', linewidth=2, errorbar=None, ax=ax); lines_plotted = True
             if not current_metric_df[p99_col].empty: max_val = max(max_val, current_metric_df[p99_col].max())
         if not lines_plotted: plt.close(fig); continue
-        ax.set_ylim(0, max_val * 1.15 if max_val > 0 else 100) # Increased padding
+        ax.set_ylim(0, max_val * 1.15 if max_val > 0 else 100)
         ax.set_title(title_str, fontsize=15, weight='bold'); ax.set_ylabel(f'{metric_name_pretty}', fontsize=13); ax.set_xlabel('Scenario (Threads)', fontsize=13)
         ax.tick_params(axis='x', rotation=45, labelsize=10); ax.tick_params(axis='y', labelsize=10)
         ax.legend(title='Metric', fontsize=10, title_fontsize=11)
@@ -276,7 +260,6 @@ def plot_latency_percentiles(df_to_plot, current_user_id, current_workload_id, c
         filename = os.path.join(user_plot_dir, f"{current_workload_id}_{current_database}_{filename_metric_suffix}_latency_percentiles.png")
         fig.savefig(filename, dpi=150); plt.close(fig)
 
-# --- Summary Plotting Functions ---
 def plot_cpu_throughput_comparison(mean_data):
     os.makedirs(SUMMARY_PLOT_DIR, exist_ok=True)
     cpu_comp_data = mean_data.groupby(['user', 'cpu_description', 'database', 'workload'], as_index=False)['overall_throughput'].mean()
@@ -352,7 +335,6 @@ def plot_scenario_impact_detailed(mean_data):
         filename = os.path.join(user_plot_dir, f"{db_id}_{workload_id}_scenario_impact.png")
         fig.savefig(filename, dpi=150); plt.close(fig)
 
-# --- Presentation Plotting Functions ---
 def plot_presentation_overall_db_winner(mean_data):
     os.makedirs(os.path.join(SUMMARY_PLOT_DIR, "presentation"), exist_ok=True)
     overall_avg = mean_data.groupby('database', as_index=False)['overall_throughput'].mean()
@@ -456,7 +438,6 @@ def main():
         for workload_id in WORKLOAD_ORDER:
             workload_data = user_data[user_data['workload'] == workload_id]
             if workload_data.empty: continue
-            # print(f"  --- Detailed Workload: {WORKLOAD_DESCRIPTION_MAP.get(workload_id, workload_id)} ---")
             throughput_plot_data = workload_data[workload_data['overall_throughput'].notna()]
             if not throughput_plot_data.empty:
                  plot_throughput_comparison(throughput_plot_data, user_id, workload_id)
@@ -470,7 +451,7 @@ def main():
     os.makedirs(SUMMARY_PLOT_DIR, exist_ok=True)
     if not mean_run_df.empty:
         plot_cpu_throughput_comparison(mean_run_df)
-        baseline_scenario_key = (10000, 10000, 10, 100, True, 1) # Includes threads for key
+        baseline_scenario_key = (10000, 10000, 10, 100, True, 1)
         baseline_scenario_label = SCENARIO_PARAMS_TO_NAME_MAP.get(baseline_scenario_key)[0] 
         mean_run_df_baseline_s1 = mean_run_df[mean_run_df['scenario_short_label'] == baseline_scenario_label]
         if not mean_run_df_baseline_s1.empty:

@@ -1,18 +1,5 @@
 #!/bin/bash
-# Usiamo set -x per stampare ogni comando prima di eseguirlo (molto verboso!)
-# Usiamo set -e per uscire all'errore, -u per variabili non definite, -o pipefail per pipeline
 set -xeuo pipefail
-
-# --- Script Parameters (Passed as arguments) ---
-# $1: WORKLOAD_NAME
-# $2: REP_NUM
-# $3: RECORD_COUNT
-# $4: OPERATION_COUNT
-# $5: FIELD_COUNT
-# $6: FIELD_LENGTH
-# $7: READ_ALL_FIELDS (true/false)
-# $8: DB_USER_SUBDIR
-# $9: THREADS
 
 if [ "$#" -ne 9 ]; then
     echo "ERROR: Illegal number of parameters. Expected 9." >&2
@@ -30,10 +17,9 @@ READ_ALL_FIELDS_BOOL="$7"
 DB_USER_SUBDIR="$8"
 THREADS="$9"
 
-# --- Static Cassandra Config ---
 DB_NAME="cassandra"
 CASSANDRA_BATCH_SIZE=100
-REPLICATION_FACTOR=3 # Adjust if your cluster setup differs
+REPLICATION_FACTOR=3 
 READ_CONSISTENCY="QUORUM"
 WRITE_CONSISTENCY="QUORUM"
 KEYSPACE_NAME="ycsb"
@@ -41,14 +27,12 @@ TABLE_NAME="usertable"
 YCSB_PATH="./bin/ycsb"
 WORKLOAD_PATH_PREFIX="workloads/"
 
-# --- Environment Check ---
 [ -z "${CASS_HOSTS-}" ] && { echo "ERROR: CASS_HOSTS not set for ${DB_NAME}" >&2; exit 1; }
 CQLSH_HOST=$(echo "${CASS_HOSTS}" | cut -d, -f1)
 
 echo "INFO [${DB_NAME}]: Starting test run for ${WORKLOAD_NAME}, Rep ${REP_NUM}, Threads ${THREADS}"
 echo "INFO [${DB_NAME}]: Params: RC=${RECORD_COUNT}, OC=${OPERATION_COUNT}, FC=${FIELD_COUNT}, FL=${FIELD_LENGTH}, RAF=${READ_ALL_FIELDS_BOOL}, Threads=${THREADS}, UserSubdir=${DB_USER_SUBDIR}"
 
-# --- Timestamp & Output Dir ---
 GENERATED_TIMESTAMP=$(date -u -d "+2 hours" +%Y-%m-%d_%H-%M-%S)
 OUTPUT_SUBDIR_PARAMS="rc${RECORD_COUNT}_oc${OPERATION_COUNT}_fc${FIELD_COUNT}_fl${FIELD_LENGTH}_raf${READ_ALL_FIELDS_BOOL}_th${THREADS}"
 OUTPUT_DIR="/results/${DB_USER_SUBDIR}/${DB_NAME}/${WORKLOAD_NAME}/${OUTPUT_SUBDIR_PARAMS}"
@@ -56,7 +40,6 @@ OUTPUT_DIR="/results/${DB_USER_SUBDIR}/${DB_NAME}/${WORKLOAD_NAME}/${OUTPUT_SUBD
 echo "INFO [${DB_NAME}]: Creating output directory: ${OUTPUT_DIR}"
 mkdir -p "${OUTPUT_DIR}"
 
-# --- Funzione robusta per cqlsh ---
 execute_cql_or_exit() {
     local host="$1"
     local cql_command="$2"
@@ -80,9 +63,7 @@ execute_cql_or_exit() {
     fi
     return ${exit_code} 
 }
-# --- Fine funzione ---
 
-# --- Preparazione Schema Cassandra (Keyspace e Tabella) ---
 echo "INFO [${DB_NAME}]: Preparing Cassandra Schema (Host: ${CQLSH_HOST})..."
 if ! command -v cqlsh &> /dev/null; then echo "ERROR [${DB_NAME}]: 'cqlsh' not found!" >&2; exit 1; fi
 cqlsh --version
@@ -96,7 +77,6 @@ execute_cql_or_exit "${CQLSH_HOST}" "${CREATE_KEYSPACE_CQL}" "Create Keyspace"
 echo "INFO [${DB_NAME}]: Waiting after CREATE KEYSPACE..."
 sleep 15
 
-# Explicit check for keyspace existence
 MAX_CHECKS=5; CHECK_COUNT=0; KEYSPACE_FOUND=false
 while [ "${KEYSPACE_FOUND}" = "false" ] && [ ${CHECK_COUNT} -lt ${MAX_CHECKS} ]; do
     echo "INFO [${DB_NAME}]: Verifying keyspace ${KEYSPACE_NAME} (Attempt $((CHECK_COUNT+1))/${MAX_CHECKS})..."
@@ -106,15 +86,12 @@ while [ "${KEYSPACE_FOUND}" = "false" ] && [ ${CHECK_COUNT} -lt ${MAX_CHECKS} ];
 done
 if [ "${KEYSPACE_FOUND}" = "false" ]; then echo "ERROR [${DB_NAME}]: Keyspace ${KEYSPACE_NAME} not found after multiple checks!" >&2; exit 1; fi
 
-# The table schema uses 10 fields (field0-field9) as per standard YCSB setup.
-# YCSB parameters fieldcount & fieldlength will control which/how much of these are used.
 CREATE_TABLE_CQL="CREATE TABLE IF NOT EXISTS ${KEYSPACE_NAME}.${TABLE_NAME} (y_id varchar PRIMARY KEY, field0 varchar, field1 varchar, field2 varchar, field3 varchar, field4 varchar, field5 varchar, field6 varchar, field7 varchar, field8 varchar, field9 varchar) WITH default_time_to_live = 0;"
 execute_cql_or_exit "${CQLSH_HOST}" "${CREATE_TABLE_CQL}" "Create Table"
 echo "INFO [${DB_NAME}]: Waiting after CREATE TABLE..."
 sleep 10
 echo "INFO [${DB_NAME}]: Cassandra schema preparation completed."
 
-# --- YCSB Load Phase ---
 LOAD_OUTPUT_FILE="${OUTPUT_DIR}/load_rep${REP_NUM}_${GENERATED_TIMESTAMP}.txt"
 echo "INFO [${DB_NAME}]: Esecuzione LOAD. Output: ${LOAD_OUTPUT_FILE}"
 "${YCSB_PATH}" load cassandra-cql -s -threads "${THREADS}" \
@@ -134,11 +111,10 @@ echo "INFO [${DB_NAME}]: Esecuzione LOAD. Output: ${LOAD_OUTPUT_FILE}"
 
         if ! grep -q "\[OVERALL\], RunTime(ms)" "${LOAD_OUTPUT_FILE}"; then
     echo "ERROR [${DB_NAME}]: LOAD fallito per ${WORKLOAD_NAME}, Rep ${REP_NUM}, Threads ${THREADS}. Vedi ${LOAD_OUTPUT_FILE}"
-    tail -n 30 "${LOAD_OUTPUT_FILE}" # Show more lines for Cassandra errors
+    tail -n 30 "${LOAD_OUTPUT_FILE}" 
         fi
         echo "INFO [${DB_NAME}]: LOAD completato."
 
-# --- YCSB Run Phase ---
 RUN_OUTPUT_FILE="${OUTPUT_DIR}/run_rep${REP_NUM}_${GENERATED_TIMESTAMP}.txt"
 echo "INFO [${DB_NAME}]: Esecuzione RUN. Output: ${RUN_OUTPUT_FILE}"
 "${YCSB_PATH}" run cassandra-cql -s -threads "${THREADS}" \
