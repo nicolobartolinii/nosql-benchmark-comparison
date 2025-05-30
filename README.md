@@ -1,12 +1,12 @@
 # Comparazione Prestazioni NoSQL DBMS con YCSB
 
-Questo progetto confronta le prestazioni tecniche di tre tipi di DBMS NoSQL:
+Il seguente progetto confronta le prestazioni tecniche di tre tipi di DBMS NoSQL:
 *   **Key-value store:** Redis (Cluster Mode - 3 nodi)
 *   **Document store:** MongoDB (Replica Set - 1 shard primario con 2 secondari, totale 3 nodi)
 *   **Column-family store:** Cassandra (Ring - 3 nodi)
 
-Il framework di benchmarking utilizzato è Yahoo! Cloud Serving Benchmark (YCSB), versione 0.17.0. Tutti i test vengono eseguiti in container Docker.
 
+Per i test, viene usato il framework di benchmarking Yahoo! Cloud Serving Benchmark (YCSB), versione 0.17.0. Per tenere tutto pulito e replicabile, tutti i test vengono eseguire su container Docker
 ## Struttura del Progetto
 
 ```
@@ -51,6 +51,7 @@ nosql-benchmark-comparison/
 ```
 
 ## Prerequisiti
+AL fine di poter eseguire i test e analizzare i risultati, bisogna avere installato i seguenti strumenti:
 
 *   Docker ([Installazione](https://docs.docker.com/get-docker/))
 *   Docker Compose ([Installazione](https://docs.docker.com/compose/install/))
@@ -62,7 +63,8 @@ nosql-benchmark-comparison/
     ```
 
 ## Setup Iniziale
-
+Di seguito sono riportati i passaggi per configurare il proprio ambiente di test e preparare i container Docker per i benchmark.
+Ovviamente, è necessario aver installato i prerequisiti elencati sopra, ed essere nella root del progetto dopo aver clonato il repository.
 1.  **Clonare il Repository:**
     ```bash
     git clone https://github.com/nicolobartolinii/nosql-benchmark-comparison.git
@@ -96,14 +98,18 @@ nosql-benchmark-comparison/
 
 ## Esecuzione dei Benchmark
 
-Gli script orchestratori (`run_*.sh`) gestiscono l'avvio del cluster, l'esecuzione dei test YCSB e la pulizia finale. I test sono strutturati per eseguire **7 scenari differenti** per ciascuno dei 6 workload standard YCSB (A-F). Ogni combinazione di scenario e workload viene ripetuta 3 volte.
+Gli script orchestratori inseriti nel file (`run_*.sh`) gestiscono l'avvio del cluster,  l'esecuzione dei test YCSB e la pulizia finale. I test sono strutturati per eseguire **7 scenari differenti** per ciascuno dei 6 workload standard YCSB (A-F), inoltre ogni combinazione di scenario e workload viene ripetuta 3 volte.
 
 **Parametri Comuni degli Scenari** (a meno di diversa specificazione):
+
 *   `fieldcount=10`
 *   `fieldlength=100`
 *   `readallfields=true`
 
+Ovviamente questi parametri possono essere modificati per ogni scenario specifico.
+
 **Definizione degli Scenari di Test:**
+Gli scenari che sono stati pensati e creati per coprire una varietà di casi d'uso e configurazioni sono i seguenti:
 
 1.  **S1: Baseline (1 Thread)**
     *   `recordcount=10000`, `operationcount=10000`, `threads=1`
@@ -202,8 +208,7 @@ Esempio aggiornato:
 `results/nick/mongodb/workloada/rc10000_oc10000_fc10_fl100_raftrue_th1/load_rep1_2024-07-30_10-00-00.txt`
 
 ## Analisi e Visualizzazione dei Risultati
-
-Sono forniti due script Python per l'analisi e la visualizzazione dei risultati:
+Per facilitare l'analisi dei risultati ottenuti dai test, sono stati sviluppato due script Python che permettono di generare grafici e visualizzazioni basate sui dati raccolti.
 
 1.  **`plot_results.py` (Multi-Utente/Storico):**
     *   Progettato per analizzare i dati di **tutti gli utenti** presenti nella directory `results/` che hanno una struttura di directory compatibile (inclusa la parte `_th[THREADS]`).
@@ -236,10 +241,3 @@ Gli script generano una vasta gamma di visualizzazioni, tra cui:
 *   Analisi dell'impatto dello scaling dei Thread YCSB.
 *   Box plots sulla stabilità della Latenza tra le ripetizioni per scenari chiave.
 *   Grafici di sommario e per presentazioni che aggregano le performance.
-
-## TODO / Prossimi Passi
-
-*   Completare i cicli di benchmark con la configurazione a 7 scenari per il database e utente principale (`nick`).
-*   Applicare limiti di risorse Docker consistenti nei file `docker-compose.yml` (CPU, memoria) per standardizzare ulteriormente l'ambiente di test e rieseguire i benchmark.
-*   Analizzare in dettaglio i numerosi grafici generati da `plot_results_single_user.py`.
-*   Redigere il report finale del progetto, includendo l'analisi critica dei risultati, discutendo l'impatto dell'architettura dei DB, della configurazione RAM vs. Disco, dei parametri di YCSB (come `recordcount`, `operationcount`, `threads`), e le osservazioni sulla fairness della comparazione.
